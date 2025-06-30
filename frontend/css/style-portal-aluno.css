@@ -38,6 +38,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden; /* Evita scroll horizontal */
 }
 
 /* ===== HEADER FIXO ===== */
@@ -49,7 +50,6 @@ body {
   width: 100%;
   z-index: 1000;
   box-shadow: var(--sombra-padrao);
-  transition: var(--transicao-padrao);
   padding: 1rem 0;
   display: flex;
   justify-content: center;
@@ -76,7 +76,6 @@ body {
   width: 80px; /* Tamanho reduzido para dashboard */
   height: 80px;
   object-fit: contain;
-  transition: var(--transicao-padrao);
 }
 
 .logo-text h1 {
@@ -184,16 +183,6 @@ body {
   color: var(--cor-branco);
 }
 
-.sidebar-menu a svg {
-  fill: var(--cor-texto); /* Cor padrão do ícone */
-  transition: fill 0.3s ease;
-}
-
-.sidebar-menu a:hover svg,
-.sidebar-menu a.active svg {
-  fill: var(--cor-branco); /* Cor do ícone ao hover/ativo */
-}
-
 /* ===== ÁREA DE CONTEÚDO PRINCIPAL ===== */
 .content-area {
   flex: 1;
@@ -208,20 +197,10 @@ body {
 /* ===== SEÇÕES DE CONTEÚDO (CONTROLADAS POR JS) ===== */
 .content-section {
   display: none; /* Escondido por padrão */
-  animation: fadeIn 0.5s ease;
 }
 
 .content-section.active {
   display: block;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .content-section h2 {
@@ -235,7 +214,7 @@ body {
 /* ===== CARDS DE INFORMAÇÃO ===== */
 .info-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* Sempre 3 colunas fixas */
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
@@ -246,12 +225,6 @@ body {
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
-}
-
-.info-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--sombra-padrao);
 }
 
 .info-card h3 {
@@ -261,10 +234,6 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.info-card h3 svg {
-  fill: var(--cor-primaria);
 }
 
 .info-card p {
@@ -352,7 +321,6 @@ body {
   border: 1px solid var(--cor-cinza-claro);
   border-radius: 8px;
   background-color: #fcfcfc;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .form-alterar-senha label {
@@ -363,7 +331,7 @@ body {
 }
 
 .form-alterar-senha input[type="password"] {
-  width: calc(100% - 20px); /* Ajuste para padding */
+  width: 100%;
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
@@ -433,11 +401,6 @@ body {
   color: var(--cor-primaria);
   padding: 5px;
   border-radius: 50%;
-  transition: var(--transicao-padrao);
-}
-
-.calendar-header button:hover {
-  background-color: var(--cor-cinza-claro);
 }
 
 .calendar-day-name {
@@ -453,11 +416,6 @@ body {
   background-color: #f0f0f0;
   border-radius: 4px;
   cursor: pointer;
-  transition: var(--transicao-padrao);
-}
-
-.calendar-date:hover {
-  background-color: #e5e5e5;
 }
 
 .calendar-date.current-month {
@@ -555,7 +513,6 @@ body {
 }
 
 .social-link-footer:hover {
-  transform: translateY(-2px);
   background: #f0f0f0;
 }
 
@@ -563,84 +520,4 @@ body {
   width: 20px;
   height: 20px;
   object-fit: contain;
-}
-
-/* ===== RESPONSIVIDADE ===== */
-@media (max-width: 768px) {
-  .header-content,
-  .main-layout {
-    flex-direction: column;
-    padding: 0 1rem;
-  }
-
-  .header-actions {
-    width: 100%;
-    justify-content: center;
-    margin-top: 1rem;
-  }
-
-  .logo-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .sidebar {
-    width: 100%;
-    position: static;
-    margin-bottom: 2rem;
-    padding: 1rem;
-  }
-
-  .sidebar-menu a {
-    justify-content: center;
-  }
-
-  .content-area {
-    padding: 1rem;
-  }
-
-  .info-cards-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .boletim-table,
-  .matricula-details,
-  .form-alterar-senha {
-    font-size: 0.9em;
-  }
-
-  .boletim-table th,
-  .boletim-table td {
-    padding: 8px;
-  }
-
-  .calendar-header {
-    font-size: 1.2em;
-  }
-
-  .calendar-header button {
-    font-size: 1.5em;
-  }
-
-  .calendar-day-name,
-  .calendar-date {
-    padding: 5px 0;
-  }
-
-  .footer-container {
-    flex-direction: column;
-    text-align: center;
-    padding: 0 1rem;
-  }
-
-  .contact-info,
-  .footer-right {
-    text-align: center;
-    justify-content: center;
-  }
-
-  .contact-info {
-    min-width: unset;
-    width: 100%;
-  }
 }

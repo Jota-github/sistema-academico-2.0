@@ -25,8 +25,6 @@
   --cor-sucesso: #155724;
   --cor-erro: #721c24;
   --cor-info: #0c5460;
-  --sombra-padrao: 0 4px 15px rgba(34, 139, 34, 0.2);
-  --transicao-padrao: all 0.3s ease;
   --fonte-principal: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -45,51 +43,28 @@ body {
 /* ===== PAINEL ESQUERDO ===== */
 .left-panel {
   flex: 1;
-  background: linear-gradient(135deg, var(--cor-preto) 0%, #2d2d2d 50%, var(--cor-preto) 100%);
+  background: var(--cor-preto);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   color: var(--cor-branco);
   padding: 3rem;
-  position: relative;
-}
-
-.left-panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at 30% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 50%);
-  pointer-events: none;
 }
 
 /* ===== SEÇÃO DO LOGO ===== */
 .logo-section {
   text-align: center;
-  z-index: 2;
   margin-bottom: 2rem;
 }
 
 .logo-container {
   width: 280px;
   height: 280px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 0.8rem;
-  transition: var(--transicao-padrao);
-  box-shadow: none;
-}
-
-.logo-container:hover {
-  transform: scale(1.02);
-  filter: brightness(1.05);
 }
 
 .logo-container img {
@@ -98,11 +73,6 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
-  border: none;
-  box-shadow: none;
 }
 
 .logo-placeholder {
@@ -115,7 +85,6 @@ body {
 
 /* ===== INFORMAÇÕES DA INSTITUIÇÃO ===== */
 .institution-info {
-  z-index: 2;
   text-align: center;
 }
 
@@ -140,7 +109,6 @@ body {
 
 /* ===== TEXTO DE BOAS-VINDAS ===== */
 .welcome-text {
-  z-index: 2;
   margin-top: 3rem;
   text-align: center;
 }
@@ -164,7 +132,6 @@ body {
   padding: 1.5rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(34, 139, 34, 0.2);
 }
 
@@ -192,17 +159,7 @@ body {
   justify-content: center;
   align-items: center;
   padding: 3rem 3rem 3rem 4rem;
-  position: relative;
-}
-
-.right-panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(to bottom, var(--cor-primaria), var(--cor-secundaria));
+  border-left: 4px solid var(--cor-primaria);
 }
 
 /* ===== CONTAINER DO FORMULÁRIO ===== */
@@ -244,7 +201,6 @@ body {
   border-radius: 8px;
   background: var(--cor-branco);
   cursor: pointer;
-  transition: var(--transicao-padrao);
   text-decoration: none;
   color: var(--cor-cinza);
   font-weight: 500;
@@ -258,8 +214,6 @@ body {
 .nav-btn:hover {
   border-color: var(--cor-primaria);
   color: var(--cor-primaria);
-  transform: translateY(-2px);
-  box-shadow: var(--sombra-padrao);
 }
 
 /* ===== ÍCONES DE NAVEGAÇÃO ===== */
@@ -300,7 +254,6 @@ body {
   border-radius: 8px;
   font-size: 1rem;
   background: var(--cor-fundo-input);
-  transition: var(--transicao-padrao);
   color: var(--cor-texto);
 }
 
@@ -308,7 +261,6 @@ body {
   outline: none;
   border-color: var(--cor-primaria);
   background: var(--cor-branco);
-  box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.1);
 }
 
 .input-group input::placeholder {
@@ -321,37 +273,18 @@ body {
   padding: 15px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-destaque) 100%);
+  background: var(--cor-primaria);
   color: var(--cor-branco);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transicao-padrao);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 1.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.recovery-btn::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.recovery-btn:hover::before {
-  left: 100%;
 }
 
 .recovery-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(34, 139, 34, 0.4);
+  background: var(--cor-secundaria);
 }
 
 /* ===== LINK VOLTAR AO LOGIN ===== */
@@ -364,7 +297,6 @@ body {
   color: var(--cor-primaria);
   text-decoration: none;
   font-size: 0.9rem;
-  transition: var(--transicao-padrao);
 }
 
 .back-to-login a:hover {
@@ -379,7 +311,6 @@ body {
   font-weight: 500;
   padding: 15px;
   border-radius: 8px;
-  transition: var(--transicao-padrao);
   display: none;
 }
 
@@ -413,7 +344,7 @@ body {
   width: 80px;
   height: 80px;
   margin: 0 auto 1.5rem;
-  background: linear-gradient(135deg, var(--cor-primaria), var(--cor-destaque));
+  background: var(--cor-primaria);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -432,30 +363,6 @@ body {
 .loading .recovery-btn {
   background: #6c757d;
   cursor: not-allowed;
-}
-
-.loading .recovery-btn::after {
-  content: "";
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  margin: auto;
-  border: 2px solid transparent;
-  border-top-color: var(--cor-branco);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-@keyframes spin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
 }
 
 /* ===== RESPONSIVIDADE ===== */

@@ -109,17 +109,6 @@
                         Boletim Alunos
                     </a>
                 </li>
-                
-                <!-- MEU CALENDÁRIO: Agenda pessoal do professor -->
-                <li>
-                    <a href="#" data-section="meu-calendario" title="Ver seu calendário pessoal com dias de aula">
-                        <!-- Ícone SVG de calendário -->
-                        <svg viewBox="0 0 24 24" width="20" height="20">
-                            <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"></path>
-                        </svg>
-                        Meu Calendário
-                    </a>
-                </li>
             </ul>
         </aside>
 
@@ -269,31 +258,6 @@
                     </table>
                 </div>
             </section>
-
-            <!-- ==================== SEÇÃO: CALENDÁRIO DO PROFESSOR ==================== -->
-            <!-- Calendário personalizado mostrando dias de aula -->
-            <section id="meu-calendario" class="content-section">
-                <h2>Meu Calendário</h2>
-                
-                <!-- WIDGET DE CALENDÁRIO: Interativo com navegação mensal -->
-                <div class="calendar">
-                    <!-- Cabeçalho do calendário com navegação -->
-                    <div class="calendar-header">
-                        <button id="prevMonthBtn" title="Ver mês anterior">←</button>
-                        <span id="currentMonthYear" title="Mês e ano atual"></span>
-                        <button id="nextMonthBtn" title="Ver próximo mês">→</button>
-                    </div>
-                    
-                    <!-- Grid do calendário (preenchido via JavaScript) -->
-                    <div class="calendar-grid"></div>
-                </div>
-                
-                <!-- LEGENDA VISUAL: Explica os símbolos do calendário -->
-                <p style="margin-top: 1.5rem; text-align: center; color: #555;">
-                    <span style="display: inline-block; width: 15px; height: 15px; background: #ffc107; border-radius: 3px; vertical-align: middle; margin-right: 5px;" title="Indicador de dia com aula"></span> = Dia de Aula
-                </p>
-            </section>
-
         </main>
     </div>
 
@@ -360,12 +324,6 @@
             boletimTableBody: document.getElementById('boletimTableBody'),         // Corpo da tabela de notas
             btnVoltarLista: document.getElementById('btnVoltarLista'),             // Botão voltar
             
-            // Elementos do calendário
-            currentMonthYearSpan: document.getElementById('currentMonthYear'),     // Título mês/ano
-            calendarGrid: document.querySelector('#meu-calendario .calendar-grid'), // Grid do calendário
-            prevMonthBtn: document.getElementById('prevMonthBtn'),                 // Botão mês anterior
-            nextMonthBtn: document.getElementById('nextMonthBtn'),                 // Botão próximo mês
-            
             // Elementos do modal
             alunosTurmaModal: document.getElementById('alunosTurmaModal'),         // Modal completo
             modalTurmaTitle: document.getElementById('modalTurmaTitle'),           // Título do modal
@@ -382,12 +340,6 @@
             userType: localStorage.getItem('userType'),      // Tipo de usuário (deve ser 'professor')
             loggedInUserId: null,                           // ID do professor logado (extraído do token)
             professorTurmas: [],                            // Array com todas as turmas do professor
-            
-            // Estado do calendário
-            calendar: {
-                currentMonth: new Date().getMonth(),        // Mês atual (0-11)
-                currentYear: new Date().getFullYear(),     // Ano atual
-            }
         };
 
         // ==================== FUNÇÕES UTILITÁRIAS ==================== 
@@ -421,7 +373,6 @@
             // Carrega dados específicos conforme a seção
             if (sectionId === 'boletim-alunos') loadAlunosForBoletim();        // Carrega lista de alunos
             if (sectionId === 'gerenciar-turmas') loadProfessorTurmas();       // Carrega turmas do professor
-            if (sectionId === 'meu-calendario') renderProfessorCalendar(state.calendar.currentMonth, state.calendar.currentYear); // Renderiza calendário
         }
 
         // ==================== CARREGAMENTO DOS DADOS DO PROFESSOR ==================== 
@@ -497,7 +448,7 @@
 
                 if (!response.ok) throw new Error('Falha na requisição.');
 
-                // Salva turmas no estado da aplicação para uso posterior (calendário)
+                // Salva turmas no estado da aplicação para uso posterior
                 state.professorTurmas = await response.json();
                 elements.turmasTableBody.innerHTML = ''; // Limpa conteúdo anterior
                 
@@ -529,9 +480,6 @@
                     // Mostra mensagem quando professor não tem turmas
                     elements.turmasTableBody.innerHTML = '<tr><td colspan="5">Nenhuma turma encontrada para você.</td></tr>';
                 }
-
-                // Atualiza calendário com as turmas carregadas
-                renderProfessorCalendar(state.calendar.currentMonth, state.calendar.currentYear);
                 
             } catch(e) {
                 // Trata erros de rede ou servidor
@@ -671,67 +619,6 @@
             }
         }
 
-        // ==================== RENDERIZAÇÃO DO CALENDÁRIO DO PROFESSOR ==================== 
-        // Cria calendário visual com destaque para dias de aula
-        function renderProfessorCalendar(month, year) {
-            elements.calendarGrid.innerHTML = ''; // Limpa calendário anterior
-
-            // Adiciona cabeçalhos dos dias da semana
-            const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            dayNames.forEach(day => {
-                const div = document.createElement('div');
-                div.className = 'calendar-day-name';
-                div.textContent = day;
-                elements.calendarGrid.appendChild(div);
-            });
-
-            // Calcula estrutura do mês
-            const firstDayOfMonth = new Date(year, month, 1);
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const firstDayOfWeek = firstDayOfMonth.getDay();
-
-            // Espaços vazios para alinhar primeiro dia
-            for (let i = 0; i < firstDayOfWeek; i++) {
-                elements.calendarGrid.appendChild(document.createElement('div'));
-            }
-
-            // Cria elementos para cada dia do mês
-            for (let day = 1; day <= daysInMonth; day++) {
-                const div = document.createElement('div');
-                div.className = 'calendar-date';
-                div.textContent = day;
-
-                // Destaca dia atual
-                const today = new Date();
-                if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                    div.classList.add('today');
-                }
-
-                // ==================== LÓGICA DE DIAS COM AULA ==================== 
-                // Verifica se o professor tem aula neste dia
-                const dayOfWeek = new Date(year, month, day).getDay();
-                const dayMap = { 1: 'SEG', 2: 'TER', 3: 'QUA', 4: 'QUI', 5: 'SEX', 6: 'SAB' }; // Mapeia números para abreviações
-                const currentDayStr = dayMap[dayOfWeek]; // Converte dia da semana para string
-
-                // Filtra turmas que têm aula neste dia da semana
-                const turmasDoDia = state.professorTurmas.filter(t => 
-                    t.horario && t.horario.toUpperCase().includes(currentDayStr)
-                );
-
-                // Se há turmas neste dia, destaca visualmente
-                if(turmasDoDia.length > 0) {
-                    div.classList.add('has-event'); // Classe CSS para estilo especial
-                    // Tooltip com informações das aulas
-                    div.title = turmasDoDia.map(t => `${t.disciplina_nome} (${t.horario})`).join('\n');
-                }
-
-                elements.calendarGrid.appendChild(div);
-            }
-
-            // Atualiza título do mês/ano
-            elements.currentMonthYearSpan.textContent = new Date(year, month).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-        }
-
         // ==================== VERIFICAÇÃO DE AUTENTICAÇÃO ==================== 
         // Verifica se usuário está logado e é professor antes de continuar
         if (!state.authToken || state.userType !== 'professor') {
@@ -824,28 +711,6 @@
             if (event.target == elements.alunosTurmaModal) {
                 closeModal();
             }
-        });
-
-        // ==================== NAVEGAÇÃO DO CALENDÁRIO ==================== 
-        
-        // Mês anterior
-        elements.prevMonthBtn.addEventListener('click', () => {
-            state.calendar.currentMonth--;
-            if (state.calendar.currentMonth < 0) { 
-                state.calendar.currentMonth = 11; 
-                state.calendar.currentYear--; 
-            }
-            renderProfessorCalendar(state.calendar.currentMonth, state.calendar.currentYear);
-        });
-
-        // Próximo mês
-        elements.nextMonthBtn.addEventListener('click', () => {
-            state.calendar.currentMonth++;
-            if (state.calendar.currentMonth > 11) { 
-                state.calendar.currentMonth = 0; 
-                state.calendar.currentYear++; 
-            }
-            renderProfessorCalendar(state.calendar.currentMonth, state.calendar.currentYear);
         });
     });
     </script>
