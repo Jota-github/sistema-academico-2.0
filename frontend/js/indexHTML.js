@@ -1,4 +1,3 @@
-// ==================== VARIÁVEIS GLOBAIS ====================
 // Variáveis que podem ser usadas em qualquer parte do código JavaScript
 // 'let' permite que o valor seja alterado depois
 let currentImageIndex = 0;  // Controla qual imagem está sendo mostrada no modal
@@ -7,7 +6,6 @@ let currentImageIndex = 0;  // Controla qual imagem está sendo mostrada no moda
 // querySelectorAll() encontra TODOS os elementos com a classe especificada
 const galleryItems = document.querySelectorAll('.gallery-item');
 
-// ==================== CONTROLE DA TELA DE CARREGAMENTO ====================
 // Este código é executado quando a página termina de carregar completamente
 // 'load' é diferente de 'DOMContentLoaded' - espera imagens, CSS, etc.
 window.addEventListener('load', () => {
@@ -22,7 +20,6 @@ window.addEventListener('load', () => {
     }, 500);
 });
 
-// ==================== EFEITO DE SCROLL NO CABEÇALHO ====================
 // Muda a aparência do cabeçalho quando o usuário rola a página
 window.addEventListener('scroll', () => {
     const header = document.getElementById('header');
@@ -33,7 +30,6 @@ window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 50);
 });
 
-// ==================== SISTEMA DE ABAS (NOTÍCIAS/EVENTOS) ====================
 // Função que é chamada quando o usuário clica nos botões "Notícias" ou "Eventos"
 function showTab(tabName) {
     // PASSO 1: Esconde todos os conteúdos das abas
@@ -52,8 +48,6 @@ function showTab(tabName) {
     // Template literal (``) permite inserir variáveis dentro de strings
     document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
 }
-
-// ==================== MENUS EXPANSÍVEIS (ACORDEÃO) ====================
 // Função que abre/fecha os menus da sidebar quando clicados
 function toggleExpand(element) {
     // 'element' é o cabeçalho que foi clicado
@@ -75,9 +69,6 @@ function toggleExpand(element) {
         arrow.textContent = '▲';  // Seta para cima
     }
 }
-
-// ==================== SISTEMA DE MODAL DA GALERIA ====================
-// Funções que controlam a janela de visualização ampliada das imagens
 
 // Função para abrir o modal com uma imagem específica
 function openModal(index) {
@@ -125,7 +116,6 @@ function prevImage() {
     openModal(currentImageIndex);
 }
 
-// ==================== FECHAR MODAL CLICANDO NO FUNDO ====================
 // Permite fechar o modal clicando na área escura ao redor da imagem
 document.getElementById('galleryModal').addEventListener('click', function(e) {
     // e.target é o elemento que foi clicado
@@ -134,7 +124,6 @@ document.getElementById('galleryModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
 });
 
-// ==================== ROLAGEM SUAVE PARA LINKS INTERNOS ====================
 // Quando o usuário clica em links que começam com # (como #sobre, #galeria)
 // Em vez de "pular" para a seção, rola suavemente
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {

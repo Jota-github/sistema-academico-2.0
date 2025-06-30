@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Meta tags são informações sobre a página que não aparecem visualmente -->
-    <meta charset="UTF-8"> <!-- Define que a página usa caracteres UTF-8 (acentos, ç, etc.) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Faz a página se adaptar ao tamanho da tela do celular/tablet -->
+
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     
     <!-- Título que aparece na aba do navegador -->
     <title>Login Professor - Sistema Acadêmico</title>
@@ -16,12 +16,9 @@
 </head>
 <body>
     <!-- CONTAINER PRINCIPAL: Div que engloba toda a página e organiza o layout -->
-    <!-- Este container usa CSS Flexbox para dividir a tela em duas partes iguais -->
     <div class="container">
         
         <!-- ==================== PAINEL ESQUERDO ==================== -->
-        <!-- Esta seção ocupa 50% da tela e contém informações visuais e institucionais -->
-        <!-- Serve para dar contexto e identidade visual ao sistema -->
         <div class="left-panel">
             
             <!-- SEÇÃO DO LOGO: Agrupa logo + nome da instituição -->
@@ -29,8 +26,6 @@
                 <!-- Container específico para a imagem do logo -->
                 <div class="logo-container">
                     <!-- Imagem do logo da instituição -->
-                    <!-- 'alt' é importante para acessibilidade (leitores de tela) -->
-                    <!-- 'title' mostra uma dica quando o usuário passa o mouse sobre a imagem -->
                     <img src="imagens/logo-engenharia.png" 
                          alt="Logo Engenharia de Software" 
                          title="Sistema Acadêmico - Engenharia de Software - IFPE Campus Belo Jardim">
@@ -47,7 +42,7 @@
                 </div>
             </div>
             
-            <!-- TEXTO DE BOAS-VINDAS: Mensagem personalizada para professores -->
+            <!-- TEXTO DE BOAS-VINDAS -->
             <div class="welcome-text">
                 <h1>Bem-vindo, Professor!</h1>
                 <p>Acesse sua área docente com suas credenciais institucionais.</p>
@@ -61,7 +56,6 @@
         </div>
 
         <!-- ==================== PAINEL DIREITO ==================== -->
-        <!-- Esta seção ocupa os outros 50% da tela e contém o formulário de login -->
         <div class="right-panel">
             
             <!-- CONTAINER DO FORMULÁRIO: Centraliza e organiza todos os elementos do formulário -->
@@ -73,7 +67,6 @@
                     <p class="form-subtitle">Entre com suas credenciais docentes</p>
                     
                     <!-- LINK PARA ÁREA DO ALUNO: Permite alternar entre tipos de login -->
-                    <!-- Este botão leva para a página de login dos alunos -->
                     <div class="student-login">
                         <a href="login-aluno.html" class="student-btn" title="Clique para acessar a área de login dos alunos">
                             <div class="student-icon">
@@ -86,18 +79,15 @@
                         </a>
                     </div>
                     
-                    <!-- Linha divisória visual para separar as seções -->
                     <div class="divider"></div> 
                 </div>
 
                 <!-- ==================== FORMULÁRIO DE LOGIN ==================== -->
                 <!-- Este é o formulário principal onde o professor digita suas credenciais -->
-                <!-- O 'id' é usado pelo JavaScript para capturar os dados quando o usuário clica em "Entrar" -->
                 <form id="loginForm">
                     
                     <!-- CAMPO CPF: Input para o professor digitar seu CPF -->
                     <div class="input-group">
-                        <!-- 'type="text"' permite qualquer texto -->
                         <!-- 'required' torna o campo obrigatório (não pode ficar vazio) -->
                         <!-- 'maxlength="14"' limita a 14 caracteres (CPF formatado: 123.456.789-01) -->
                         <!-- 'oninput' chama a função formatCPF() toda vez que o usuário digita algo -->
@@ -143,9 +133,7 @@
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT - PROGRAMAÇÃO DA PÁGINA ==================== -->
-    <!-- Todo o código JavaScript fica dentro da tag <script> -->
-    <!-- JavaScript é a linguagem que torna a página interativa -->
+    <!-- ==================== JAVASCRIPT =================== -->
     <script src="js/login-professor.js"></script>
 </body>
 </html>

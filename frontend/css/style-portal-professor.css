@@ -1,10 +1,3 @@
-/* ========================================
-   ARQUIVO: style-portal-professor.css
-   DESCRIÇÃO: Estilos para o portal/dashboard do professor
-   FUNCIONALIDADE: Interface administrativa com gestão de alunos,
-   boletins, calendário e funcionalidades específicas do professor
-   ======================================== */
-
 /* ===== RESET E VARIÁVEIS ===== */
 * {
   margin: 0;
@@ -397,54 +390,6 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
-
-/* ===== CALENDÁRIO ===== */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.calendar-header {
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  font-size: 1.4em;
-  font-weight: bold;
-}
-
-.calendar-header button {
-  background: none;
-  border: none;
-  font-size: 1.8em;
-  cursor: pointer;
-  color: var(--cor-primaria);
-}
-
-.calendar-day-name {
-  font-weight: bold;
-  padding: 8px 0;
-  background-color: #e0e0e0;
-}
-
-.calendar-date {
-  padding: 15px 0;
-  border: 1px solid #ddd;
-}
-
-.calendar-date.today {
-  background-color: #e8f5e8;
-}
-
-.calendar-date.has-event {
-  background-color: var(--cor-aviso);
-  color: var(--cor-texto);
-  font-weight: bold;
 }
 
 /* ===== MODAL "VER ALUNOS" ===== */

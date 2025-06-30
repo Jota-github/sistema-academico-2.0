@@ -1,6 +1,6 @@
 // Função que inicializa tudo que é comum aos portais de aluno e professor
 function inicializarPortal(userTypeEsperado, redirectUrl) {
-    // 1. VERIFICAÇÃO DE AUTENTICAÇÃO
+    // VERIFICAÇÃO DE AUTENTICAÇÃO
     const authToken = localStorage.getItem('authToken');
     const userType = localStorage.getItem('userType');
 
@@ -10,7 +10,7 @@ function inicializarPortal(userTypeEsperado, redirectUrl) {
         return null; // Para a execução se o acesso for negado
     }
 
-    // 2. SELEÇÃO DE ELEMENTOS COMUNS DO DOM
+    // SELEÇÃO DE ELEMENTOS COMUNS DO DOM
     const elements = {
         userNameDisplay: document.getElementById('userName'),
         sidebarUserName: document.getElementById('sidebarUserName'),
@@ -21,14 +21,14 @@ function inicializarPortal(userTypeEsperado, redirectUrl) {
         contentSections: document.querySelectorAll('.content-section'),
     };
 
-    // 3. FUNCIONALIDADE DE LOGOUT
+    // FUNCIONALIDADE DE LOGOUT
     elements.logoutBtn.addEventListener('click', () => {
         localStorage.clear();
         alert('Você foi desconectado.');
         window.location.href = '/index.html';
     });
 
-    // 4. SISTEMA DE NAVEGAÇÃO SPA
+    // SISTEMA DE NAVEGAÇÃO SPA
     function activateSection(sectionId, callback) {
         elements.sidebarLinks.forEach(item => item.classList.remove('active'));
         const link = document.querySelector(`a[data-section="${sectionId}"]`);
@@ -53,7 +53,7 @@ function inicializarPortal(userTypeEsperado, redirectUrl) {
         });
     });
 
-    // 5. CARREGAMENTO DOS DADOS DO USUÁRIO
+    // CARREGAMENTO DOS DADOS DO USUÁRIO
     async function loadUserData() {
         try {
             const payload = JSON.parse(atob(authToken.split('.')[1]));

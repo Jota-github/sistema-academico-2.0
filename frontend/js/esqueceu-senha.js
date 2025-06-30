@@ -1,29 +1,22 @@
-// ==================== SELEÇÃO DOS ELEMENTOS HTML ====================
 // Encontra e guarda referências aos elementos que serão manipulados
 const recoveryForm = document.getElementById('recoveryForm');           // Formulário de recuperação
 const messageElement = document.getElementById('message');              // Div para mensagens
 const container = document.querySelector('.container');                 // Container principal
 const formContainer = document.querySelector('.form-container');       // Container do formulário
 
-// ==================== PROCESSAMENTO DA RECUPERAÇÃO ====================
 // Código executado quando o usuário clica em "Enviar Instruções"
 recoveryForm.addEventListener('submit', async (event) => {
-    // ==================== PASSO 1: PREVENIR COMPORTAMENTO PADRÃO ====================
     event.preventDefault(); // Impede que a página recarregue
 
-    // ==================== PASSO 2: ATIVAR FEEDBACK VISUAL ====================
     container.classList.add('loading'); // Mostra indicador de carregamento
 
-    // ==================== PASSO 3: COLETAR DADOS DO FORMULÁRIO ====================
     const email = event.target.email.value; // Pega o email digitado
 
-    // ==================== PASSO 4: LIMPAR MENSAGENS ANTERIORES ====================
     messageElement.textContent = '';           // Remove texto anterior
     messageElement.className = '';             // Remove classes CSS anteriores
     messageElement.style.display = 'none';    // Esconde a div de mensagem
 
     try {
-        // ==================== COMUNICAÇÃO COM O SERVIDOR ====================
         // Envia requisição para o servidor solicitando recuperação de senha
         const response = await fetch('http://localhost:3000/recuperar-senha', {
             method: 'POST',                                     // POST para enviar dados
@@ -35,11 +28,11 @@ recoveryForm.addEventListener('submit', async (event) => {
         container.classList.remove('loading');
 
         if (response.ok) {
-            // ✅ SUCESSO: Email encontrado e instruções enviadas
+            // Email encontrado e instruções enviadas
             showSuccessState(email);
 
         } else {
-            // ❌ ERRO: Email não encontrado ou outro problema
+            // Email não encontrado ou outro problema
             let errorMessage = 'Não encontramos nenhuma conta com este email. Verifique o que foi digitado.';
 
             try {
@@ -58,7 +51,6 @@ recoveryForm.addEventListener('submit', async (event) => {
         }
 
     } catch (error) {
-        // ==================== TRATAMENTO DE ERRO DE CONEXÃO ====================
         container.classList.remove('loading');
         messageElement.textContent = 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.';
         messageElement.classList.add('error');
@@ -69,7 +61,6 @@ recoveryForm.addEventListener('submit', async (event) => {
     }
 });
 
-// ==================== TELA DE SUCESSO ====================
 // Função que substitui o formulário por uma tela de confirmação
 function showSuccessState(email) {
     // Substitui todo o conteúdo do container do formulário

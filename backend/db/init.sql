@@ -93,13 +93,13 @@ SELECT id, '2023004', 'Engenharia de Software', 3 FROM Usuarios WHERE email = 'a
 INSERT INTO Alunos (usuario_id, matricula, curso, periodo)
 SELECT id, '2023005', 'Engenharia de Software', 3 FROM Usuarios WHERE email = 'aluno5@discente.ifpe.edu.br' ON CONFLICT (usuario_id) DO NOTHING;
 
--- CORRIGIDO: Usando a coluna "email" corretamente
+-- =============================================================================
+-- INSERÇÃO DE DADOS INICIAIS (PROFESSORES)
+-- =============================================================================
 INSERT INTO Usuarios (email, senha, nome_completo, tipo) VALUES
 ('professor1@docente.ifpe.edu.br', 'p12345', 'Carlos Lima', 'professor'),
 ('professor2@docente.ifpe.edu.br', 'p123456', 'Beatriz Costa', 'professor')
 ON CONFLICT (email) DO NOTHING;
-
--- CORRIGIDO: Usando a coluna "email" corretamente
 INSERT INTO Professores (usuario_id, cpf)
 SELECT id, '11122233301' FROM Usuarios WHERE email = 'professor1@docente.ifpe.edu.br' ON CONFLICT (usuario_id) DO NOTHING;
 INSERT INTO Professores (usuario_id, cpf)

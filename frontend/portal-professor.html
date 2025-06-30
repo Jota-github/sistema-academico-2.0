@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Configurações básicas da página -->
-    <meta charset="UTF-8"> <!-- Suporte a acentos e caracteres especiais -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsividade para dispositivos móveis -->
+
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Portal do Professor - Sistema Acadêmico</title>
     
     <!-- Arquivo CSS que define toda a aparência visual do portal do professor -->
@@ -47,11 +47,9 @@
     </header>
 
     <!-- ==================== LAYOUT PRINCIPAL ==================== -->
-    <!-- Organiza a página em duas partes: menu lateral + conteúdo principal -->
     <div class="main-layout">
         
         <!-- ==================== BARRA LATERAL (SIDEBAR) ==================== -->
-        <!-- Menu fixo do lado esquerdo com perfil do usuário e navegação -->
         <aside class="sidebar">
             
             <!-- INFORMAÇÕES DO USUÁRIO: Dados básicos do professor logado -->
@@ -63,7 +61,6 @@
             </div>
 
             <!-- MENU PRINCIPAL: Lista de funcionalidades disponíveis para professores -->
-            <!-- Cada link usa 'data-section' para identificar qual seção mostrar -->
             <ul class="sidebar-menu">
                 
                 <!-- PÁGINA INICIAL: Dashboard com resumo das informações do professor -->
@@ -124,12 +121,9 @@
         </aside>
 
         <!-- ==================== ÁREA DE CONTEÚDO PRINCIPAL ==================== -->
-        <!-- Container onde as diferentes seções são exibidas conforme navegação -->
         <main class="content-area">
             
             <!-- ==================== SEÇÃO: PÁGINA INICIAL ==================== -->
-            <!-- Dashboard principal com resumo das informações do professor -->
-            <!-- A classe 'active' faz esta seção aparecer por padrão -->
             <section id="inicio" class="content-section active">
                 <h2>Página Inicial</h2>
                 
@@ -149,7 +143,6 @@
             </section>
 
             <!-- ==================== SEÇÃO: GERENCIAR TURMAS ==================== -->
-            <!-- Tabela com todas as turmas/disciplinas que o professor leciona -->
             <section id="gerenciar-turmas" class="content-section">
                 <h2>Gerenciar Turmas</h2>
                 
@@ -166,13 +159,11 @@
                         </tr>
                     </thead>
                     <!-- CORPO DA TABELA: Será preenchido dinamicamente via JavaScript -->
-                    <!-- Cada linha representará uma turma com botões para ver alunos, lançar notas, etc. -->
                     <tbody></tbody>
                 </table>
             </section>
 
             <!-- ==================== SEÇÃO: GERENCIAR ALUNOS ==================== -->
-            <!-- Lista completa de todos os alunos cadastrados no sistema -->
             <section id="gerenciar-alunos" class="content-section">
                 <h2>Gerenciar Alunos Cadastrados</h2>
                 <p>Aqui você pode visualizar todos os alunos do sistema e remover cadastros.</p>
@@ -197,7 +188,6 @@
             </section>
 
             <!-- ==================== SEÇÃO: CADASTRAR ALUNO ==================== -->
-            <!-- Formulário completo para adicionar novos alunos ao sistema -->
             <section id="cadastrar-aluno" class="content-section">
                 <h2>Cadastrar Novo Aluno</h2>
                 
@@ -254,7 +244,6 @@
             </section>
 
             <!-- ==================== SEÇÃO: BOLETIM DOS ALUNOS ==================== -->
-            <!-- Interface para visualizar notas e frequência de qualquer aluno -->
             <section id="boletim-alunos" class="content-section">
                 <h2>Boletim dos Alunos</h2>
                 
@@ -266,7 +255,6 @@
                 </div>
 
                 <!-- CONTAINER DOS DETALHES: Mostra o boletim completo do aluno selecionado -->
-                <!-- Inicialmente oculto, aparece quando um aluno é selecionado -->
                 <div id="boletimAlunoDetalhes">
                     <!-- Botão para voltar à lista de alunos -->
                     <button class="back-button" 
@@ -302,8 +290,6 @@
     </div>
 
     <!-- ==================== MODAL: ALUNOS DA TURMA ==================== -->
-    <!-- Janela popup que mostra a lista de alunos de uma turma específica -->
-    <!-- Inicialmente oculta, aparece quando o professor clica em "Ver Alunos" -->
     <div id="alunosTurmaModal" class="modal">
         <div class="modal-content">
             
@@ -317,19 +303,13 @@
             </div>
             
             <!-- LISTA DE ALUNOS: Será populada com os alunos da turma selecionada -->
-            <!-- Cada item pode incluir nome, matrícula e outras informações relevantes -->
             <ul id="modalAlunosList"></ul>
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT - LÓGICA DA APLICAÇÃO ==================== -->
-    <!-- Scripts que controlam todo o comportamento dinâmico e interatividade -->
-    
-    <!-- Script compartilhado entre portal do aluno e professor (funções comuns) -->
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script src="js/portal-shared.js"></script>
-    
-    <!-- Script específico do portal do professor (funcionalidades exclusivas) -->
-    <!-- Inclui: gerenciamento de turmas, cadastro de alunos, visualização de boletins, etc. -->
+
     <script src="js/portal-professor.js"></script>
 </body>
 </html>

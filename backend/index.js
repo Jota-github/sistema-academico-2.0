@@ -1,19 +1,3 @@
-/**
- * ================================================================================
- * SERVIDOR BACKEND - PORTAL EDUCACIONAL (ALUNO/PROFESSOR)
- * ================================================================================
- * * Este arquivo contém toda a lógica do servidor backend para o sistema de portal
- * educacional, incluindo autenticação, gestão de usuários, notícias e boletins.
- * * Tecnologias utilizadas:
- * - Node.js + Express.js (servidor web)
- * - PostgreSQL (banco de dados)
- * - JWT (autenticação por tokens)
- * - CORS (controle de acesso entre origens)
- * * Autor: Sistema Portal Educacional
- * Data: 2024
- * ================================================================================
- */
-
 // ================================================================================
 // CONFIGURAÇÃO INICIAL E IMPORTAÇÃO DE DEPENDÊNCIAS
 // ================================================================================
@@ -40,26 +24,22 @@ const PORTA = 3000; // Porta onde o servidor irá executar
 // ================================================================================
 
 /**
- * CORS (Cross-Origin Resource Sharing)
  * Permite que o frontend acesse o backend mesmo estando em domínios diferentes
  */
 app.use(cors());
 
 /**
- * Parser JSON
  * Permite que o servidor entenda requisições com corpo em formato JSON
  */
 app.use(express.json());
 
 /**
- * SERVIR ARQUIVOS ESTÁTICOS
  * Configura o Express para servir arquivos HTML, CSS, JS da pasta 'public'
- * IMPORTANTE: No container Docker, os arquivos frontend ficam em '/public/'
+ * No container Docker, os arquivos frontend ficam em '/public/'
  */
 app.use(express.static(__dirname + '/public')); 
 
 /**
- * ROTA RAIZ - PÁGINA INICIAL
  * Serve o arquivo index.html quando alguém acessa a URL raiz do servidor
  */
 app.get('/', (req, res) => {
@@ -88,14 +68,12 @@ const pool = new Pool({
 // ================================================================================
 
 /**
- * MIDDLEWARE DE VERIFICAÇÃO DE TOKEN
  * * Esta função verifica se o usuário possui um token JWT válido antes de
  * permitir acesso às rotas protegidas do sistema.
- * * Fluxo de verificação:
- * 1. Extrai o token do cabeçalho Authorization
- * 2. Valida o formato "Bearer TOKEN"
- * 3. Verifica a assinatura e validade do token
- * 4. Decodifica os dados do usuário e adiciona ao objeto req
+ * Extrai o token do cabeçalho Authorization
+ * Valida o formato "Bearer TOKEN"
+ * Verifica a assinatura e validade do token
+ * Decodifica os dados do usuário e adiciona ao objeto req
  * * @param {Object} req - Objeto de requisição HTTP
  * @param {Object} res - Objeto de resposta HTTP  
  * @param {Function} next - Função para continuar para próximo middleware
@@ -140,12 +118,8 @@ function verificarTokenEAutorizacao(req, res, next) {
 // ================================================================================
 
 /**
- * ROTA: CADASTRO DE NOVOS USUÁRIOS
- * POST /usuarios
  * * Permite que professores cadastrem novos usuários (alunos ou professores).
  * Utiliza transações para garantir consistência dos dados.
- * * IMPORTANTE: Apenas professores podem cadastrar novos usuários
- * ATENÇÃO: Senhas são armazenadas em texto puro (não recomendado para produção)
  */
 app.post('/usuarios', verificarTokenEAutorizacao, async (req, res) => {
     // Verifica se o usuário logado é um professor
@@ -201,8 +175,6 @@ app.post('/usuarios', verificarTokenEAutorizacao, async (req, res) => {
 });
 
 /**
- * ROTA: LOGIN DE ALUNO
- * POST /login
  * * Autentica alunos usando email e senha.
  * Retorna um token JWT para acesso às rotas protegidas.
  */
@@ -228,7 +200,6 @@ app.post('/login', async (req, res) => {
             return res.status(403).json({ error: 'Acesso negado. Utilize o portal do professor.' }); 
         }
         
-        // ATENÇÃO: Comparação de senha em texto puro (inseguro para produção)
         const senhaCorreta = (senha === usuario.senha); 
         
         if (!senhaCorreta) { 
@@ -249,8 +220,6 @@ app.post('/login', async (req, res) => {
 });
 
 /**
- * ROTA: LOGIN DE PROFESSOR
- * POST /login/professor
  * * Autentica professores usando CPF e senha.
  * Diferente do login de aluno, utiliza CPF como identificador.
  */
@@ -275,7 +244,7 @@ app.post('/login/professor', async (req, res) => {
             return res.status(404).json({ error: 'Professor não encontrado com o CPF informado.' });
         }
         
-        // Verificação de senha em texto puro
+        // Verificação de senha
         if (senha !== usuario.senha) {
             return res.status(401).json({ error: 'Senha inválida.' });
         }
@@ -298,8 +267,6 @@ app.post('/login/professor', async (req, res) => {
 // ================================================================================
 
 /**
- * ROTA: BUSCAR DETALHES DE USUÁRIO
- * GET /usuarios/:id
  * * Retorna informações detalhadas de um usuário específico.
  * Inclui dados específicos de aluno ou professor conforme o tipo.
  * * Controle de acesso: Usuário só pode ver seus próprios dados, exceto professores
@@ -342,8 +309,6 @@ app.get('/usuarios/:id', verificarTokenEAutorizacao, async (req, res) => {
 });
 
 /**
- * ROTA: ALTERAÇÃO DE SENHA
- * POST /alterar-senha
  * * Permite que usuários autenticados alterem suas senhas.
  * Requer a senha atual para confirmação de segurança.
  */
@@ -383,8 +348,6 @@ app.post('/alterar-senha', verificarTokenEAutorizacao, async (req, res) => {
 // ================================================================================
 
 /**
- * ROTA: CRIAR NOTÍCIA
- * POST /noticias
  * * Permite que professores publiquem notícias no sistema.
  * As notícias são exibidas no portal dos alunos.
  */
@@ -406,8 +369,6 @@ app.post('/noticias', verificarTokenEAutorizacao, async (req, res) => {
 });
 
 /**
- * ROTA: LISTAR NOTÍCIAS
- * GET /noticias
  * * Retorna todas as notícias publicadas, ordenadas por data.
  * Inclui o nome do autor (professor) de cada notícia.
  */
@@ -427,8 +388,6 @@ app.get('/noticias', async (req, res) => {
 // ================================================================================
 
 /**
- * ROTA: BOLETIM DE ALUNO ESPECÍFICO (PARA PROFESSOR)
- * GET /boletins/aluno/:alunoId
  * * Permite que professores consultem o boletim de qualquer aluno.
  * Retorna todas as disciplinas, notas e frequência do aluno.
  */
@@ -464,8 +423,6 @@ app.get('/boletins/aluno/:alunoId', verificarTokenEAutorizacao, async (req, res)
 });
 
 /**
- * ROTA: BOLETIM DO ALUNO LOGADO
- * GET /alunos/boletim
  * * Permite que alunos consultem seu próprio boletim.
  * Retorna apenas as informações do aluno autenticado.
  */
@@ -505,8 +462,6 @@ app.get('/alunos/boletim', verificarTokenEAutorizacao, async (req, res) => {
 // ================================================================================
 
 /**
- * ROTA: LISTAR TODOS OS ALUNOS
- * GET /alunos
  * * Retorna lista completa de alunos para uso administrativo pelos professores.
  * Necessária para funcionalidades como consulta de boletins.
  */
@@ -525,8 +480,6 @@ app.get('/alunos', verificarTokenEAutorizacao, async (req, res) => {
 });
 
 /**
- * ROTA: REMOVER ALUNO (APENAS PROFESSORES)
- * DELETE /alunos/:id
  * * Permite que um professor remova um aluno do sistema.
  * A exclusão na tabela 'Usuarios' aciona o ON DELETE CASCADE para limpar
  * os registros relacionados nas tabelas 'Alunos' e 'Matriculas'.
@@ -573,8 +526,6 @@ app.delete('/alunos/:id', verificarTokenEAutorizacao, async (req, res) => {
 });
 
 /**
- * ROTA: TURMAS DO PROFESSOR
- * GET /professores/turmas
  * * Retorna as turmas que o professor logado leciona.
  * Inclui informações da disciplina, ano e semestre.
  */
@@ -594,8 +545,6 @@ app.get('/professores/turmas', verificarTokenEAutorizacao, async (req, res) => {
 });
 
 /**
- * ROTA: ALUNOS DE UMA TURMA
- * GET /turmas/:turmaId/alunos
  * * Retorna os alunos matriculados em uma turma específica.
  * Útil para professores visualizarem suas turmas.
  */
@@ -627,11 +576,8 @@ app.get('/turmas/:turmaId/alunos', verificarTokenEAutorizacao, async (req, res) 
 // ================================================================================
 
 /**
- * ROTA: RECUPERAÇÃO DE SENHA
- * POST /recuperar-senha
  * * Simula o envio de email para recuperação de senha.
  * Em produção, deveria gerar um token temporário e enviar por email real.
- * * NOTA: Por segurança, sempre retorna sucesso, mesmo se o email não existir
  */
 app.post('/recuperar-senha', async (req, res) => {
     const { email } = req.body;
@@ -660,13 +606,12 @@ app.post('/recuperar-senha', async (req, res) => {
 // ================================================================================
 
 /**
- * INICIALIZAÇÃO DO SERVIDOR
  * * Inicia o servidor Express na porta especificada e exibe mensagem de confirmação.
  * O servidor ficará escutando requisições HTTP nesta porta.
  */
 app.listen(PORTA, () => {
-    console.log(`🚀 Servidor Portal Educacional rodando na porta ${PORTA}`);
-    console.log(`📱 Acesse: http://localhost:${PORTA}`);
-    console.log(`📊 Banco de dados: PostgreSQL`);
-    console.log(`🔐 Autenticação: JWT`);
+    console.log(`Servidor Portal Educacional rodando na porta ${PORTA}`);
+    console.log(`Acesse: http://localhost:${PORTA}`);
+    console.log(`Banco de dados: PostgreSQL`);
+    console.log(`Autenticação: JWT`);
 });

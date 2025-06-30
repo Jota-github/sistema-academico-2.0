@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Configurações básicas da página -->
-    <meta charset="UTF-8"> <!-- Suporte a acentos e caracteres especiais -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsividade para dispositivos móveis -->
+
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal do Aluno - Sistema Acadêmico</title>
     
     <!-- Arquivo CSS que define toda a aparência visual do portal -->
@@ -49,11 +49,9 @@
     </header>
 
     <!-- ==================== LAYOUT PRINCIPAL ==================== -->
-    <!-- Organiza a página em duas partes: menu lateral + conteúdo principal -->
     <div class="main-layout">
         
         <!-- ==================== BARRA LATERAL (SIDEBAR) ==================== -->
-        <!-- Menu fixo do lado esquerdo com perfil do usuário e navegação -->
         <aside class="sidebar">
             
             <!-- INFORMAÇÕES DO USUÁRIO: Dados básicos do aluno logado -->
@@ -114,12 +112,10 @@
             </ul>
         </aside>
 
-        <!-- ==================== ÁREA DE CONTEÚDO PRINCIPAL ==================== -->
-        <!-- Container onde as diferentes seções são exibidas conforme navegação -->
+        <!-- ==================== ÁREA DE CONTEÚDO PRINCIPAL ==================== -->>
         <main class="content-area">
             
             <!-- ==================== SEÇÃO: PÁGINA INICIAL ==================== -->
-            <!-- Dashboard principal com resumo das informações mais importantes -->
             <!-- A classe 'active' faz esta seção aparecer por padrão -->
             <section id="inicio" class="content-section active">
                 <h2>Página Inicial</h2>
@@ -244,18 +240,16 @@
                     <!-- Lista das disciplinas que o aluno está cursando atualmente -->
                     <p><strong>Disciplinas Atuais:</strong></p>
                     <ul>
-                        <!-- Em uma versão real, esta lista seria gerada dinamicamente -->
+
                         <li title="Disciplina do semestre atual">Banco de Dados I (Turma 2025.1)</li>
                         <li title="Disciplina do semestre atual">Redes de Computadores (Turma 2025.1)</li>
                     </ul>
                     
-                    <!-- Informação adicional sobre contato com secretaria -->
                     <p style="margin-top: 1rem;">Para informações detalhadas sobre sua matrícula ou para realizar ajustes, entre em contato com a secretaria.</p>
                 </div>
             </section>
 
             <!-- ==================== SEÇÃO: ALTERAR SENHA ==================== -->
-            <!-- Formulário seguro para mudança de senha do usuário -->
             <section id="alterar-senha" class="content-section">
                 <h2>Alterar Senha</h2>
                 
@@ -295,8 +289,7 @@
         </main>
     </div>
     
-    <!-- ==================== JAVASCRIPT - LÓGICA DA APLICAÇÃO ==================== -->
-    <!-- Todo o comportamento dinâmico e interatividade da página -->
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script src="js/portal-shared.js"></script>
     <script src="js/portal-aluno.js"></script>
 </body>
