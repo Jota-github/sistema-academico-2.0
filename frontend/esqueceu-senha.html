@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configurações básicas da página -->
+    <meta charset="UTF-8"> <!-- Permite usar acentos e caracteres especiais -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsividade para dispositivos móveis -->
+    <title>Recuperar Senha - Sistema Acadêmico</title>
+    
+    <!-- Arquivo CSS específico para esta página -->
+    <link rel="stylesheet" href="css/style-esqueceu-senha.css">
+    
+    <!-- Ícone que aparece na aba do navegador -->
+    <link rel="icon" href="imagens/logo-engenharia.png" type="image/png">
+</head>
+<body>
+    <!-- ==================== CONTAINER PRINCIPAL ==================== -->
+    <!-- Organiza a página em duas colunas: informações + formulário -->
+    <div class="container">
+        
+        <!-- ==================== PAINEL ESQUERDO ==================== -->
+        <!-- Lado esquerdo com logo e instruções sobre recuperação de senha -->
+        <div class="left-panel">
+            
+            <!-- SEÇÃO DO LOGO: Identidade visual da instituição -->
+            <div class="logo-section">
+                <div class="logo-container">
+                    <!-- Logo oficial da instituição -->
+                    <img src="imagens/logo-engenharia.png" 
+                         alt="Logo oficial do curso de Engenharia de Software" 
+                         title="IFPE Campus Belo Jardim - Sistema de Recuperação de Senha">
+                </div>
+                
+                <!-- Informações institucionais -->
+                <div class="institution-info">
+                    <div class="institution-name">SISTEMA ACADÊMICO</div>
+                    <div class="course-name">
+                        <span class="course-highlight">ENGENHARIA</span><br>DE SOFTWARE
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TEXTO EXPLICATIVO: Instruções sobre o processo de recuperação -->
+            <div class="welcome-text">
+                <h1>Recuperar Senha</h1>
+                <p>Não se preocupe! Vamos ajudá-lo a recuperar o acesso à sua conta.</p>
+                
+                <!-- Informações detalhadas sobre como funciona o processo -->
+                <div class="recovery-info">
+                    <h3>Como funciona?</h3>
+                    <p>Digite seu email cadastrado e enviaremos instruções detalhadas para redefinir sua senha de forma segura.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PAINEL DIREITO ==================== -->
+        <!-- Lado direito com formulário de recuperação e navegação -->
+        <div class="right-panel">
+            
+            <!-- CONTAINER DO FORMULÁRIO: Organiza todos os elementos -->
+            <div class="form-container">
+                
+                <!-- CABEÇALHO: Título e botões de navegação -->
+                <div class="form-header">
+                    <h2>Esqueceu sua senha?</h2>
+                    <p class="form-subtitle">Digite seu email cadastrado para receber as instruções de recuperação</p>
+                    
+                    <!-- BOTÕES DE NAVEGAÇÃO: Links para páginas de login -->
+                    <div class="navigation-buttons">
+                        <!-- Botão para login de aluno -->
+                        <a href="login-aluno.html" 
+                           class="nav-btn" 
+                           title="Ir para a página de login dos alunos">
+                            <div class="nav-icon">
+                                <img src="imagens/mini-logo.jpg" 
+                                     alt="Ícone representando área do aluno" 
+                                     title="Ícone da área do aluno">
+                            </div>
+                            Login Aluno
+                        </a>
+                        
+                        <!-- Botão para login de professor -->
+                        <a href="login-professor.html" 
+                           class="nav-btn" 
+                           title="Ir para a página de login dos professores">
+                            <div class="nav-icon">
+                                <img src="imagens/mini-logo.jpg" 
+                                     alt="Ícone representando área do professor" 
+                                     title="Ícone da área do professor">
+                            </div>
+                            Login Professor
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ==================== FORMULÁRIO DE RECUPERAÇÃO ==================== -->
+                <!-- Formulário onde o usuário digita seu email para recuperar a senha -->
+                <form id="recoveryForm">
+                    <div class="input-group">
+                        <!-- Label associado ao campo de email -->
+                        <label for="email">Email cadastrado</label>
+                        
+                        <!-- Campo de email com validação automática -->
+                        <!-- 'type="email"' valida se o formato está correto -->
+                        <!-- 'required' torna o campo obrigatório -->
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               placeholder="Digite seu email" 
+                               required
+                               title="Digite o email que você usou para se cadastrar no sistema">
+                    </div>
+                    
+                    <!-- Botão para enviar o formulário -->
+                    <button type="submit" 
+                            class="recovery-btn"
+                            title="Clique para enviar instruções de recuperação para seu email">
+                        Enviar Instruções
+                    </button>
+                </form>
+
+                <!-- LINK PARA VOLTAR: Opção para retornar ao login -->
+                <div class="back-to-login">
+                    <a href="login-aluno.html" title="Voltar para a página de login dos alunos">← Voltar ao login</a>
+                </div>
+
+                <!-- ÁREA PARA MENSAGENS: Feedback de sucesso ou erro -->
+                <!-- Inicialmente vazia, preenchida pelo JavaScript -->
+                <div id="message"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT - LÓGICA DE PROGRAMAÇÃO ==================== -->
+    <script>
+    // ==================== SELEÇÃO DOS ELEMENTOS HTML ==================== 
+    // Encontra e guarda referências aos elementos que serão manipulados
+    const recoveryForm = document.getElementById('recoveryForm');           // Formulário de recuperação
+    const messageElement = document.getElementById('message');              // Div para mensagens
+    const container = document.querySelector('.container');                 // Container principal
+    const formContainer = document.querySelector('.form-container');       // Container do formulário
+
+    // ==================== PROCESSAMENTO DA RECUPERAÇÃO ==================== 
+    // Código executado quando o usuário clica em "Enviar Instruções"
+    recoveryForm.addEventListener('submit', async (event) => {
+        // ==================== PASSO 1: PREVENIR COMPORTAMENTO PADRÃO ==================== 
+        event.preventDefault(); // Impede que a página recarregue
+        
+        // ==================== PASSO 2: ATIVAR FEEDBACK VISUAL ==================== 
+        container.classList.add('loading'); // Mostra indicador de carregamento
+        
+        // ==================== PASSO 3: COLETAR DADOS DO FORMULÁRIO ==================== 
+        const email = event.target.email.value; // Pega o email digitado
+        
+        // ==================== PASSO 4: LIMPAR MENSAGENS ANTERIORES ==================== 
+        messageElement.textContent = '';           // Remove texto anterior
+        messageElement.className = '';             // Remove classes CSS anteriores
+        messageElement.style.display = 'none';    // Esconde a div de mensagem
+
+        try {
+            // ==================== COMUNICAÇÃO COM O SERVIDOR ==================== 
+            // Envia requisição para o servidor solicitando recuperação de senha
+            const response = await fetch('http://localhost:3000/recuperar-senha', {
+                method: 'POST',                                     // POST para enviar dados
+                headers: { 'Content-Type': 'application/json' },    // Formato JSON
+                body: JSON.stringify({ email })                     // Email em formato JSON
+            });
+
+            // Remove indicador de carregamento
+            container.classList.remove('loading');
+
+            if (response.ok) {
+                // ✅ SUCESSO: Email encontrado e instruções enviadas
+                showSuccessState(email);
+                
+            } else {
+                // ❌ ERRO: Email não encontrado ou outro problema
+                let errorMessage = 'Não encontramos nenhuma conta com este email. Verifique o que foi digitado.';
+                
+                try {
+                    // Tenta extrair mensagem de erro específica do servidor
+                    const data = await response.json();
+                    if (data.error) errorMessage = data.error;
+                } catch (e) {
+                    // Se não conseguir ler a resposta, mantém mensagem padrão
+                    console.log('Resposta do servidor não é JSON válido');
+                }
+                
+                // Mostra mensagem de erro
+                messageElement.textContent = errorMessage;
+                messageElement.classList.add('error');
+                messageElement.style.display = 'block';
+            }
+            
+        } catch (error) {
+            // ==================== TRATAMENTO DE ERRO DE CONEXÃO ==================== 
+            container.classList.remove('loading');
+            messageElement.textContent = 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.';
+            messageElement.classList.add('error');
+            messageElement.style.display = 'block';
+            
+            // Log do erro para debug (apenas em desenvolvimento)
+            console.error('Erro de conexão:', error);
+        }
+    });
+
+    // ==================== TELA DE SUCESSO ==================== 
+    // Função que substitui o formulário por uma tela de confirmação
+    function showSuccessState(email) {
+        // Substitui todo o conteúdo do container do formulário
+        // Template literal (``) permite criar HTML multi-linha com variáveis
+        formContainer.innerHTML = `
+            <!-- CABEÇALHO DE SUCESSO -->
+            <div class="form-header">
+                <!-- Ícone de check verde -->
+                <div class="success-icon">✓</div>
+                <h2>Email Enviado!</h2>
+                <p class="form-subtitle">Instruções de recuperação foram enviadas para:</p>
+                <!-- Mostra o email para o qual foram enviadas as instruções -->
+                <p style="font-weight: 600; color: #228B22; margin-bottom: 2rem;">${email}</p>
+            </div>
+            
+            <!-- INSTRUÇÕES DETALHADAS -->
+            <div id="message" class="info">
+                <strong>Próximos passos:</strong><br>
+                1. Verifique sua caixa de entrada (e spam).<br>
+                2. Clique no link de recuperação.<br>
+                3. Defina sua nova senha.<br><br>
+                <em>O link expira em 1 hora por segurança.</em>
+            </div>
+
+            <!-- LINK PARA VOLTAR AO LOGIN -->
+            <div class="back-to-login" style="margin-top: 2rem;">
+                <a href="login-aluno.html">← Voltar ao login</a>
+            </div>
+
+            <!-- BOTÃO PARA TENTAR NOVAMENTE -->
+            <div style="text-align: center; margin-top: 1rem;">
+                <button onclick="location.reload()" 
+                        style="background: none; border: none; color: #228B22; text-decoration: underline; cursor: pointer; font-size: 0.9rem;"
+                        title="Recarregar a página para tentar enviar novamente">
+                    Não recebeu o email? Tentar novamente
+                </button>
+            </div>
+        `;
+    }
+    </script>
+</body>
+</html>

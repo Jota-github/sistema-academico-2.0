@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configurações básicas da página -->
+    <meta charset="UTF-8"> <!-- Suporte a acentos e caracteres especiais -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsividade para dispositivos móveis -->
+    <title>Portal do Aluno - Sistema Acadêmico</title>
+    
+    <!-- Arquivo CSS que define toda a aparência visual do portal -->
+    <link rel="stylesheet" href="/css/style-portal-aluno.css">
+    
+    <!-- Ícone que aparece na aba do navegador -->
+    <link rel="icon" href="/imagens/logo-engenharia.png" type="image/png">
+</head>
+<body>
+    <!-- ==================== CABEÇALHO FIXO ==================== -->
+    <!-- Barra superior que permanece visível durante toda a navegação -->
+    <header class="header">
+        <div class="header-content">
+            
+            <!-- LADO ESQUERDO: Logo e identificação da instituição -->
+            <div class="logo-header">
+                <img src="/imagens/logo-engenharia.png" 
+                     alt="Logo oficial do curso de Engenharia de Software" 
+                     title="IFPE Campus Belo Jardim - Portal do Aluno">
+                <div class="logo-text">
+                    <h1>Sistema Acadêmico</h1>
+                    <p>Engenharia de Software</p>
+                </div>
+            </div>
+            
+            <!-- LADO DIREITO: Informações do usuário e controles -->
+            <div class="header-actions">
+                <!-- Nome do aluno será preenchido dinamicamente pelo JavaScript -->
+                <span id="userName" 
+                      style="color: #eee; font-weight: 500; margin-right: 1rem;"
+                      title="Nome do aluno logado">
+                    Olá, Aluno!
+                </span>
+                
+                <!-- Botão para fazer logout (sair do sistema) -->
+                <button class="btn-logout" 
+                        id="logoutBtn"
+                        title="Clique para sair do sistema e voltar à página inicial">
+                    Sair
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== LAYOUT PRINCIPAL ==================== -->
+    <!-- Organiza a página em duas partes: menu lateral + conteúdo principal -->
+    <div class="main-layout">
+        
+        <!-- ==================== BARRA LATERAL (SIDEBAR) ==================== -->
+        <!-- Menu fixo do lado esquerdo com perfil do usuário e navegação -->
+        <aside class="sidebar">
+            
+            <!-- INFORMAÇÕES DO USUÁRIO: Dados básicos do aluno logado -->
+            <div class="user-info">
+                <!-- Estes elementos serão preenchidos pelo JavaScript após o login -->
+                <h3 id="sidebarUserName" title="Nome completo do aluno"></h3>
+                <p id="sidebarUserEmail" title="Email do aluno"></p>
+                <p id="sidebarUserType" title="Tipo de usuário (Aluno)"></p>
+            </div>
+
+            <!-- MENU PRINCIPAL: Lista de funcionalidades disponíveis -->
+            <!-- Cada link usa 'data-section' para identificar qual seção mostrar -->
+            <ul class="sidebar-menu">
+                
+                <!-- PÁGINA INICIAL: Dashboard com resumo das informações -->
+                <li>
+                    <a href="#" data-section="inicio" class="active" title="Ir para a página inicial do portal">
+                        <!-- Ícone SVG de casa/home -->
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                        </svg>
+                        Página Inicial
+                    </a>
+                </li>
+                
+                <!-- BOLETIM: Visualização de notas e frequência -->
+                <li>
+                    <a href="#" data-section="boletim" title="Ver suas notas e frequência em todas as disciplinas">
+                        <!-- Ícone SVG de gráfico/relatório -->
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path>
+                        </svg>
+                        Boletim
+                    </a>
+                </li>
+                
+                <!-- MATRÍCULA: Informações acadêmicas do aluno -->
+                <li>
+                    <a href="#" data-section="matricula" title="Ver informações sobre sua matrícula e disciplinas">
+                        <!-- Ícone SVG de pessoa/usuário -->
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                        </svg>
+                        Matrícula
+                    </a>
+                </li>
+                
+                <!-- ALTERAR SENHA: Formulário para mudança de senha -->
+                <li>
+                    <a href="#" data-section="alterar-senha" title="Alterar sua senha de acesso ao sistema">
+                        <!-- Ícone SVG de cadeado/segurança -->
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-2c0-1.66-1.34-3-3-3V9c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2v1c-1.66 0-3 1.34-3 3s1.34 3 3 3v1h-1c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1h-1zM9 9h6v1H9V9z"></path>
+                        </svg>
+                        Alterar Senha
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- ==================== ÁREA DE CONTEÚDO PRINCIPAL ==================== -->
+        <!-- Container onde as diferentes seções são exibidas conforme navegação -->
+        <main class="content-area">
+            
+            <!-- ==================== SEÇÃO: PÁGINA INICIAL ==================== -->
+            <!-- Dashboard principal com resumo das informações mais importantes -->
+            <!-- A classe 'active' faz esta seção aparecer por padrão -->
+            <section id="inicio" class="content-section active">
+                <h2>Página Inicial</h2>
+                
+                <!-- GRID RESPONSIVO: Organiza os cards informativos em colunas -->
+                <div class="info-cards-grid">
+                    
+                    <!-- CARD 1: Informações pessoais e acadêmicas do aluno -->
+                    <div class="info-card">
+                        <h3>
+                            <!-- Ícone de perfil/pessoa -->
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                            </svg> 
+                            Meu Perfil
+                        </h3>
+                        <!-- Cada span será preenchido com dados reais via JavaScript -->
+                        <p><strong>Nome:</strong> <span id="homeUserName" title="Nome completo do aluno"></span></p>
+                        <p><strong>Email:</strong> <span id="homeUserEmail" title="Email de contato do aluno"></span></p>
+                        <p><strong>Tipo:</strong> <span id="homeUserType" title="Tipo de usuário no sistema"></span></p>
+                        <p><strong>Matrícula:</strong> <span id="homeUserMatricula" title="Número de matrícula do aluno">N/A</span></p>
+                        <p><strong>Curso:</strong> <span id="homeUserCurso" title="Curso em que o aluno está matriculado">N/A</span></p>
+                        <p><strong>Período:</strong> <span id="homeUserPeriodo" title="Período/semestre atual do aluno">N/A</span></p>
+                    </div>
+                    
+                    <!-- CARD 2: Próximos eventos e datas importantes -->
+                    <div class="info-card">
+                        <h3>
+                            <!-- Ícone de calendário -->
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"></path>
+                            </svg> 
+                            Próximos Eventos
+                        </h3>
+                        <p>Fique atento às datas importantes do calendário acadêmico.</p>
+                        <!-- Exemplos estáticos - em uma versão real, viriam de uma API -->
+                        <p>Ex: <span class="highlight">Reunião de Turma:</span> 05/JUL (Sala B2)</p>
+                        <p>Ex: <span class="highlight">Prazo Entrega Projeto:</span> 15/JUL</p>
+                    </div>
+                    
+                    <!-- CARD 3: Resumo das notas mais recentes -->
+                    <div class="info-card">
+                        <h3>
+                            <!-- Ícone de gráfico/notas -->
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path>
+                            </svg> 
+                            Notas Recentes
+                        </h3>
+                        <p>Verifique suas últimas avaliações e média por disciplina.</p>
+                        <!-- Exemplos estáticos - em uma versão real, viriam da API de notas -->
+                        <p>Ex: <span class="highlight">BD I (Nota 1):</span> 8.5</p>
+                        <p>Ex: <span class="highlight">ES (Média Final):</span> 7.75</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SEÇÃO: BOLETIM ==================== -->
+            <!-- Tabela completa com todas as disciplinas, notas e status -->
+            <section id="boletim" class="content-section">
+                <h2>Boletim</h2>
+                
+                <!-- TABELA DE NOTAS: Será dinamicamente populada com dados da API -->
+                <table class="boletim-table">
+                    <!-- CABEÇALHO DA TABELA: Define as colunas -->
+                    <thead>
+                        <tr>
+                            <th title="Nome da disciplina">Disciplina</th>
+                            <th title="Primeira nota da disciplina">Nota 1</th>
+                            <th title="Segunda nota da disciplina">Nota 2</th>
+                            <th title="Média final calculada">Média Final</th>
+                            <th title="Percentual de frequência nas aulas">Frequência (%)</th>
+                            <th title="Status atual na disciplina">Status</th>
+                        </tr>
+                    </thead>
+                    
+                    <!-- CORPO DA TABELA: Será substituído por dados reais via JavaScript -->
+                    <tbody>
+                        <!-- Dados de exemplo para demonstração - removidos quando dados reais carregam -->
+                        <tr>
+                            <td>Engenharia de Software</td>
+                            <td>8.5</td>
+                            <td>7.0</td>
+                            <td>7.75</td>
+                            <td>90</td>
+                            <td class="status-aprovado" title="Aluno aprovado na disciplina">Aprovado</td>
+                        </tr>
+                        <tr>
+                            <td>Banco de Dados I</td>
+                            <td>7.0</td>
+                            <td>6.5</td>
+                            <td>6.75</td>
+                            <td>85</td>
+                            <td class="status-cursando" title="Aluno ainda cursando a disciplina">Cursando</td>
+                        </tr>
+                        <tr>
+                            <td>Programação Orientada a Objetos</td>
+                            <td>5.0</td>
+                            <td>4.0</td>
+                            <td>4.5</td>
+                            <td>70</td>
+                            <td class="status-reprovado" title="Aluno reprovado na disciplina">Reprovado</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ==================== SEÇÃO: MATRÍCULA ==================== -->
+            <!-- Informações detalhadas sobre a situação acadêmica do aluno -->
+            <section id="matricula" class="content-section">
+                <h2>Minha Matrícula</h2>
+                
+                <div class="matricula-details">
+                    <!-- Status geral da matrícula -->
+                    <p><strong>Status Geral:</strong> <span class="highlight" title="Situação atual da matrícula">Ativo</span></p>
+                    
+                    <!-- Informações que serão preenchidas com dados da API -->
+                    <p><strong>Número de Matrícula:</strong> <span id="matriculaNum" title="Número único de identificação do aluno">N/A</span></p>
+                    <p><strong>Curso:</strong> <span id="matriculaCurso" title="Nome do curso em que está matriculado">N/A</span></p>
+                    <p><strong>Período Atual:</strong> <span id="matriculaPeriodo" title="Semestre/período atual do aluno">N/A</span></p>
+                    
+                    <!-- Lista das disciplinas que o aluno está cursando atualmente -->
+                    <p><strong>Disciplinas Atuais:</strong></p>
+                    <ul>
+                        <!-- Em uma versão real, esta lista seria gerada dinamicamente -->
+                        <li title="Disciplina do semestre atual">Banco de Dados I (Turma 2025.1)</li>
+                        <li title="Disciplina do semestre atual">Redes de Computadores (Turma 2025.1)</li>
+                    </ul>
+                    
+                    <!-- Informação adicional sobre contato com secretaria -->
+                    <p style="margin-top: 1rem;">Para informações detalhadas sobre sua matrícula ou para realizar ajustes, entre em contato com a secretaria.</p>
+                </div>
+            </section>
+
+            <!-- ==================== SEÇÃO: ALTERAR SENHA ==================== -->
+            <!-- Formulário seguro para mudança de senha do usuário -->
+            <section id="alterar-senha" class="content-section">
+                <h2>Alterar Senha</h2>
+                
+                <!-- FORMULÁRIO DE ALTERAÇÃO: Com validação client-side e server-side -->
+                <form id="formAlterarSenha" class="form-alterar-senha">
+                    
+                    <!-- Campo para senha atual (necessário para segurança) -->
+                    <label for="currentPassword">Senha Atual:</label>
+                    <input type="password" 
+                           id="currentPassword" 
+                           required
+                           title="Digite sua senha atual para confirmar sua identidade">
+                    
+                    <!-- Campo para nova senha -->
+                    <label for="newPassword">Nova Senha:</label>
+                    <input type="password" 
+                           id="newPassword" 
+                           required
+                           title="Digite a nova senha que deseja usar">
+                    
+                    <!-- Campo para confirmação (evita erros de digitação) -->
+                    <label for="confirmNewPassword">Confirmar Nova Senha:</label>
+                    <input type="password" 
+                           id="confirmNewPassword" 
+                           required
+                           title="Digite novamente a nova senha para confirmação">
+                    
+                    <!-- Botão de submissão do formulário -->
+                    <button type="submit" title="Clique para alterar sua senha">Alterar Senha</button>
+                    
+                    <!-- Div para mostrar mensagens de sucesso ou erro -->
+                    <!-- Inicialmente oculta, aparece apenas quando há feedback -->
+                    <div id="senhaMessage" style="display: none;"></div>
+                </form>
+            </section>
+
+        </main>
+    </div>
+    
+    <!-- ==================== JAVASCRIPT - LÓGICA DA APLICAÇÃO ==================== -->
+    <!-- Todo o comportamento dinâmico e interatividade da página -->
+    <script>
+    // ==================== AGUARDA CARREGAMENTO COMPLETO ==================== 
+    // Este código só executa depois que toda a estrutura HTML foi carregada
+    // É importante para garantir que todos os elementos existam antes de tentar manipulá-los
+    document.addEventListener('DOMContentLoaded', async () => {
+        
+        // ==================== ORGANIZAÇÃO DOS ELEMENTOS DOM ==================== 
+        // Agrupa todas as referências de elementos em um objeto para melhor organização
+        // Isso facilita a manutenção e evita repetir document.getElementById() várias vezes
+        const elements = {
+            // Elementos para exibir nome do usuário em diferentes locais
+            userNameDisplay: document.getElementById('userName'),        // Nome no cabeçalho
+            sidebarUserName: document.getElementById('sidebarUserName'), // Nome na sidebar
+            sidebarUserEmail: document.getElementById('sidebarUserEmail'), // Email na sidebar
+            sidebarUserType: document.getElementById('sidebarUserType'),   // Tipo na sidebar
+            
+            // Elementos da página inicial (dashboard)
+            homeUserName: document.getElementById('homeUserName'),         // Nome no card de perfil
+            homeUserEmail: document.getElementById('homeUserEmail'),       // Email no card de perfil
+            homeUserType: document.getElementById('homeUserType'),         // Tipo no card de perfil
+            homeUserMatricula: document.getElementById('homeUserMatricula'), // Matrícula no card
+            homeUserCurso: document.getElementById('homeUserCurso'),       // Curso no card
+            homeUserPeriodo: document.getElementById('homeUserPeriodo'),   // Período no card
+            
+            // Elementos de controle e navegação
+            logoutBtn: document.getElementById('logoutBtn'),               // Botão de logout
+            sidebarLinks: document.querySelectorAll('.sidebar-menu a'),    // Todos os links do menu
+            contentSections: document.querySelectorAll('.content-section'), // Todas as seções de conteúdo
+            boletimTableBody: document.querySelector('#boletim .boletim-table tbody') // Corpo da tabela de notas
+        };
+
+        // ==================== VERIFICAÇÃO DE AUTENTICAÇÃO ==================== 
+        // Verifica se o usuário está logado e tem permissão para acessar esta página
+        
+        // Recupera dados de autenticação salvos no navegador
+        const authToken = localStorage.getItem('authToken'); // Token JWT da sessão
+        const userType = localStorage.getItem('userType');   // Tipo de usuário (aluno/professor/admin)
+
+        // Validação de acesso: só alunos autenticados podem usar esta página
+        if (!authToken || userType !== 'aluno') {
+            alert('Acesso negado. Por favor, faça login como aluno.');
+            window.location.href = '/login-aluno.html'; // Redireciona para login
+            return; // Para a execução do script
+        }
+
+        // ==================== CARREGAMENTO DOS DADOS DO USUÁRIO ==================== 
+        // Busca informações completas do aluno na API do servidor
+        try {
+            // ==================== DECODIFICAÇÃO DO TOKEN JWT ==================== 
+            // JWT (JSON Web Token) tem 3 partes separadas por ponto: header.payload.signature
+            // A parte do meio (payload) contém as informações do usuário
+            const payload = JSON.parse(atob(authToken.split('.')[1])); // Decodifica a parte do payload
+            
+            // ==================== REQUISIÇÃO AUTENTICADA ==================== 
+            // Faz requisição para buscar dados completos do usuário
+            const response = await fetch(`http://localhost:3000/usuarios/${payload.id}`, {
+                headers: { 'Authorization': `Bearer ${authToken}` } // Envia token para autenticação
+            });
+
+            // Verifica se a requisição foi bem-sucedida
+            if (!response.ok) throw new Error('Sessão inválida ou expirada');
+
+            // Converte resposta para objeto JavaScript
+            const apiUserData = await response.json();
+            
+            // ==================== ORGANIZAÇÃO DOS DADOS ==================== 
+            // Estrutura os dados com valores padrão para campos opcionais
+            // Operador || fornece um valor alternativo se o campo estiver vazio
+            // Operador ?. evita erro se aluno_info for null/undefined
+            // Operador ?? permite valor 0 (diferente de ||)
+            const userData = {
+                nome_completo: apiUserData.nome_completo || 'Aluno Exemplo',
+                email: apiUserData.email || 'aluno@exemplo.com',
+                tipo: apiUserData.tipo || 'aluno',
+                matricula: apiUserData.aluno_info?.matricula || 'N/A',
+                curso: apiUserData.aluno_info?.curso || 'N/A',
+                periodo: apiUserData.aluno_info?.periodo ?? 'N/A'
+            };
+
+            // ==================== ATUALIZAÇÃO DA INTERFACE ==================== 
+            // Preenche todos os elementos da página com os dados do usuário
+            
+            // Cabeçalho: mostra apenas primeiro nome para economizar espaço
+            elements.userNameDisplay.textContent = `Olá, ${userData.nome_completo.split(' ')[0]}!`;
+            
+            // Sidebar: informações completas do perfil
+            elements.sidebarUserName.textContent = userData.nome_completo;
+            elements.sidebarUserEmail.textContent = userData.email;
+            // Capitaliza primeira letra do tipo de usuário
+            elements.sidebarUserType.textContent = userData.tipo.charAt(0).toUpperCase() + userData.tipo.slice(1);
+            
+            // Página inicial: card de perfil completo
+            elements.homeUserName.textContent = userData.nome_completo;
+            elements.homeUserEmail.textContent = userData.email;
+            elements.homeUserType.textContent = userData.tipo.charAt(0).toUpperCase() + userData.tipo.slice(1);
+            elements.homeUserMatricula.textContent = userData.matricula;
+            elements.homeUserCurso.textContent = userData.curso;
+            elements.homeUserPeriodo.textContent = userData.periodo;
+            
+            // Seção de matrícula: informações acadêmicas
+            document.getElementById('matriculaNum').textContent = userData.matricula;
+            document.getElementById('matriculaCurso').textContent = userData.curso;
+            document.getElementById('matriculaPeriodo').textContent = userData.periodo;
+
+        } catch (e) {
+            // ==================== TRATAMENTO DE ERROS ==================== 
+            // Trata erros de autenticação, rede ou dados corrompidos
+            console.error('Erro ao decodificar token ou buscar dados:', e);
+            alert('Sua sessão é inválida. Faça login novamente.');
+            localStorage.clear(); // Remove dados corrompidos
+            window.location.href = '/login-aluno.html'; // Força novo login
+            return;
+        }
+
+        // ==================== FUNCIONALIDADE DE LOGOUT ==================== 
+        // Permite ao usuário encerrar a sessão de forma segura
+        elements.logoutBtn.addEventListener('click', () => {
+            localStorage.clear(); // Remove todos os dados da sessão
+            alert('Você foi desconectado.');
+            window.location.href = '/index.html'; // Volta para página inicial
+        });
+
+        // ==================== SISTEMA DE NAVEGAÇÃO SPA ==================== 
+        // Single Page Application: troca conteúdo sem recarregar a página
+        // Adiciona evento de clique para cada link do menu
+        elements.sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); // Impede comportamento padrão do link
+                const targetSectionId = link.getAttribute('data-section'); // Obtém ID da seção
+                activateSection(targetSectionId); // Chama função para trocar seção
+            });
+        });
+
+        // ==================== FUNÇÃO DE CONTROLE DE SEÇÕES ==================== 
+        // Controla qual seção está visível na tela
+        function activateSection(sectionId) {
+            // Remove destaque visual de todos os links do menu
+            elements.sidebarLinks.forEach(item => item.classList.remove('active'));
+            // Adiciona destaque ao link da seção atual
+            document.querySelector(`a[data-section="${sectionId}"]`).classList.add('active');
+            
+            // Esconde todas as seções de conteúdo
+            elements.contentSections.forEach(section => section.classList.remove('active'));
+            // Mostra apenas a seção selecionada
+            document.getElementById(sectionId).classList.add('active');
+
+            // Carrega dados específicos se necessário
+            // Boletim precisa buscar dados atualizados da API
+            if (sectionId === 'boletim') {
+                loadBoletim();
+            }
+        }
+        
+        // ==================== CARREGAMENTO DINÂMICO DO BOLETIM ==================== 
+        // Busca notas e frequência atualizadas do servidor
+        async function loadBoletim() {
+            // Mostra mensagem de carregamento enquanto busca dados
+            elements.boletimTableBody.innerHTML = `<tr><td colspan="6">Carregando notas...</td></tr>`;
+            
+            try {
+                // Requisição autenticada para endpoint específico do boletim
+                const response = await fetch('http://localhost:3000/alunos/boletim', {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+
+                if (!response.ok) throw new Error('Falha ao carregar boletim');
+                
+                const notas = await response.json(); // Array com dados das disciplinas
+                elements.boletimTableBody.innerHTML = ''; // Limpa conteúdo anterior
+                
+                if (notas.length > 0) {
+                    // Cria uma linha na tabela para cada disciplina
+                    notas.forEach(item => {
+                        const row = document.createElement('tr');
+                        const statusClass = `status-${item.status}`; // Classe CSS baseada no status
+                        
+                        // Monta HTML da linha com dados da disciplina
+                        // Operador ?? 'N/A' mostra N/A quando valor é null/undefined
+                        row.innerHTML = `
+                            <td title="Disciplina: ${item.disciplina_nome}">${item.disciplina_nome}</td>
+                            <td title="Primeira avaliação">${item.nota1 ?? 'N/A'}</td>
+                            <td title="Segunda avaliação">${item.nota2 ?? 'N/A'}</td>
+                            <td title="Média final calculada">${item.media_final ?? 'N/A'}</td>
+                            <td title="Percentual de presença">${item.frequencia ?? 'N/A'}%</td>
+                            <td class="${statusClass}" title="Status na disciplina">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</td>
+                        `;
+                        elements.boletimTableBody.appendChild(row); // Adiciona linha à tabela
+                    });
+                } else {
+                    // Mostra mensagem quando não há disciplinas cadastradas
+                    elements.boletimTableBody.innerHTML = `<tr><td colspan="6">Nenhuma disciplina encontrada em seu boletim.</td></tr>`;
+                }
+            } catch(e) {
+                // Trata erros de rede ou servidor
+                console.error("Erro ao carregar boletim:", e);
+                elements.boletimTableBody.innerHTML = `<tr><td colspan="6">Erro ao carregar suas notas.</td></tr>`;
+            }
+        }
+
+        // ==================== SISTEMA DE ALTERAÇÃO DE SENHA ==================== 
+        // Formulário seguro para mudança de credenciais
+        const formAlterarSenha = document.getElementById('formAlterarSenha');
+        const senhaMessage = document.getElementById('senhaMessage'); // Div para feedback
+
+        formAlterarSenha.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede envio padrão do formulário
+            
+            // Coleta valores dos campos do formulário
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            senhaMessage.style.display = 'none'; // Esconde mensagens anteriores
+
+            // ==================== VALIDAÇÃO CLIENT-SIDE ==================== 
+            // Verifica se nova senha e confirmação são iguais
+            if (newPassword !== confirmNewPassword) {
+                senhaMessage.textContent = 'A nova senha e a confirmação não coincidem.';
+                senhaMessage.className = 'error'; // Classe CSS para estilo de erro
+                senhaMessage.style.display = 'block';
+                return; // Para execução se validação falhar
+            }
+
+            try {
+                // ==================== ENVIO PARA SERVIDOR ==================== 
+                // Requisição POST para endpoint de alteração de senha
+                const response = await fetch('http://localhost:3000/alterar-senha', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Indica que está enviando JSON
+                        'Authorization': `Bearer ${authToken}` // Token para autenticação
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword }) // Converte dados para JSON
+                });
+
+                const data = await response.json(); // Resposta do servidor
+                
+                // ==================== FEEDBACK VISUAL ==================== 
+                // Mostra mensagem de sucesso ou erro baseada na resposta
+                senhaMessage.className = response.ok ? 'success' : 'error';
+                senhaMessage.textContent = data.message || data.error;
+                
+                // Limpa formulário apenas se alteração foi bem-sucedida
+                if (response.ok) formAlterarSenha.reset();
+                
+            } catch (err) {
+                // Trata erros de conexão ou problemas de rede
+                senhaMessage.className = 'error';
+                senhaMessage.textContent = 'Erro de conexão ao alterar a senha.';
+            }
+            
+            senhaMessage.style.display = 'block'; // Mostra mensagem de feedback
+        });
+
+        // ==================== INICIALIZAÇÃO DA APLICAÇÃO ==================== 
+        // Carrega dados necessários assim que a página está pronta
+        loadBoletim(); // Carrega boletim imediatamente para ter dados prontos
+    });
+    </script>
+</body>
+</html>

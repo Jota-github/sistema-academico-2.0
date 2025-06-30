@@ -1,0 +1,473 @@
+/* ========================================
+   ARQUIVO: style-login-aluno.css
+   DESCRIÇÃO: Estilos para a página de login dos alunos
+   FUNCIONALIDADE: Layout split-screen com painel esquerdo 
+   informativo e painel direito com formulário de login
+   ======================================== */
+
+/* ===== RESET E VARIÁVEIS ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --cor-primaria: #228b22; /* Verde principal */
+  --cor-secundaria: #2f4f2f; /* Verde escuro */
+  --cor-destaque: #32cd32; /* Verde claro */
+  --cor-texto: #333;
+  --cor-branco: #ffffff;
+  --cor-preto: #1a1a1a;
+  --cor-cinza: #666;
+  --cor-cinza-claro: #e1e1e1;
+  --cor-fundo-input: #f9f9f9;
+  --sombra-padrao: 0 4px 15px rgba(34, 139, 34, 0.2);
+  --transicao-padrao: all 0.3s ease;
+  --fonte-principal: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  font-family: var(--fonte-principal);
+  height: 100vh;
+  overflow: hidden; /* Evita scroll na página de login */
+}
+
+/* ===== CONTAINER PRINCIPAL (SPLIT LAYOUT) ===== */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* ===== PAINEL ESQUERDO (INFORMATIVO) ===== */
+.left-panel {
+  flex: 1; /* Ocupa metade da tela */
+  background: linear-gradient(135deg, var(--cor-preto) 0%, #2d2d2d 50%, var(--cor-preto) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--cor-branco);
+  padding: 3rem;
+  position: relative;
+}
+
+/* Efeito de overlay com gradiente radial */
+.left-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(34, 139, 34, 0.1) 0%, transparent 50%);
+  pointer-events: none; /* Não interfere com cliques */
+}
+
+/* ===== SEÇÃO DO LOGO ===== */
+.logo-section {
+  text-align: center;
+  z-index: 2; /* Fica acima do overlay */
+  margin-bottom: 2rem;
+}
+
+.logo-container {
+  width: 320px;
+  height: 320px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.8rem;
+  transition: var(--transicao-padrao);
+  box-shadow: none;
+}
+
+/* Efeito hover no logo */
+.logo-container:hover {
+  transform: scale(1.02);
+  filter: brightness(1.05);
+}
+
+.logo-container img {
+  max-width: 320px;
+  max-height: 320px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* Placeholder para quando não há logo */
+.logo-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.6rem;
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 300;
+}
+
+/* ===== INFORMAÇÕES DA INSTITUIÇÃO ===== */
+.institution-info {
+  z-index: 2;
+  text-align: center;
+}
+
+.institution-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.course-name {
+  font-size: 1.8rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.course-highlight {
+  color: var(--cor-primaria);
+  font-weight: 400;
+}
+
+/* ===== TEXTO DE BOAS-VINDAS ===== */
+.welcome-text {
+  z-index: 2;
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.welcome-text h1 {
+  font-size: 2.4rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+}
+
+.welcome-text p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  color: #cccccc;
+}
+
+/* ===== INFORMAÇÕES DO ESTUDANTE ===== */
+.student-info {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05); /* Fundo semi-transparente */
+  border-radius: 12px;
+  backdrop-filter: blur(10px); /* Efeito de desfoque */
+  border: 1px solid rgba(34, 139, 34, 0.2);
+}
+
+.student-info h3 {
+  color: var(--cor-destaque);
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.student-info p {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+/* ===== PAINEL DIREITO (FORMULÁRIO) ===== */
+.right-panel {
+  flex: 1; /* Ocupa a outra metade da tela */
+  background: var(--cor-branco);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 3rem 3rem 4rem;
+  position: relative;
+}
+
+/* Borda lateral colorida */
+.right-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--cor-primaria), var(--cor-secundaria));
+}
+
+/* ===== CONTAINER DO FORMULÁRIO ===== */
+.form-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.form-header h2 {
+  color: var(--cor-preto);
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+  color: var(--cor-cinza);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+/* ===== BOTÃO LOGIN PROFESSOR ===== */
+.teacher-login {
+  margin-bottom: 1.5rem;
+}
+
+.teacher-btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid var(--cor-cinza-claro);
+  border-radius: 8px;
+  background: var(--cor-branco);
+  cursor: pointer;
+  transition: var(--transicao-padrao);
+  text-decoration: none;
+  color: var(--cor-cinza);
+  font-weight: 500;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.teacher-btn:hover {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-padrao);
+}
+
+/* ===== ÍCONE DO PROFESSOR ===== */
+.teacher-icon {
+  width: 20px;
+  height: 20px;
+  background: var(--cor-primaria);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teacher-icon img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  border-radius: 2px;
+}
+
+/* ===== DIVISOR ===== */
+.divider {
+  margin: 1.5rem 0;
+  position: relative;
+  height: 1px;
+  background: var(--cor-cinza-claro);
+}
+
+/* ===== GRUPOS DE INPUT ===== */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid var(--cor-cinza-claro);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--cor-fundo-input);
+  transition: var(--transicao-padrao);
+  color: var(--cor-texto);
+}
+
+/* Estado de foco dos inputs */
+.input-group input:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  background: var(--cor-branco);
+  box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.1); /* Sombra de foco */
+}
+
+.input-group input::placeholder {
+  color: #999;
+}
+
+/* ===== BOTÃO DE LOGIN ===== */
+.login-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--cor-preto) 0%, #2d2d2d 100%);
+  color: var(--cor-branco);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transicao-padrao);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efeito de brilho no botão */
+.login-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(34, 139, 34, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.login-btn:hover::before {
+  left: 100%;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== LINK ESQUECEU SENHA ===== */
+.forgot-password {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.forgot-password a {
+  color: var(--cor-primaria);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: var(--transicao-padrao);
+}
+
+.forgot-password a:hover {
+  color: var(--cor-secundaria);
+  text-decoration: underline;
+}
+
+/* ===== MENSAGENS DE FEEDBACK ===== */
+#message {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: 500;
+  padding: 12px;
+  border-radius: 8px;
+  transition: var(--transicao-padrao);
+  display: none;
+}
+
+.success {
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  display: block;
+}
+
+.error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  display: block;
+}
+
+/* ===== ESTADO DE LOADING ===== */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.loading .login-btn {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Spinner de loading */
+.loading .login-btn::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: var(--cor-branco);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .left-panel {
+    flex: 0 0 45%; /* Altura fixa em mobile */
+    padding: 2rem;
+  }
+
+  .right-panel {
+    flex: 1;
+    padding: 2rem;
+  }
+
+  .welcome-text h1 {
+    font-size: 1.8rem;
+  }
+
+  .course-name {
+    font-size: 1.5rem;
+  }
+
+  .logo-container {
+    width: 200px;
+    height: 200px;
+  }
+
+  .logo-container img {
+    max-width: 200px;
+    max-height: 200px;
+  }
+
+  .student-info {
+    padding: 1rem;
+  }
+}

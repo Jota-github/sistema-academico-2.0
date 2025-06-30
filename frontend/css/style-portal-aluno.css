@@ -1,0 +1,646 @@
+/* ========================================
+   ARQUIVO: style-portal-aluno.css
+   DESCRIÇÃO: Estilos para o portal/dashboard do aluno
+   FUNCIONALIDADE: Interface completa com sidebar de navegação,
+   área de conteúdo dinâmico, boletim, calendário e perfil
+   ======================================== */
+
+/* ===== RESET E VARIÁVEIS ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --cor-primaria: #2f4f2f; /* Verde escuro principal */
+  --cor-secundaria: #228b22; /* Verde médio */
+  --cor-destaque: #90ee90; /* Verde claro */
+  --cor-sucesso: #28a745; /* Verde para aprovado */
+  --cor-erro: #dc3545; /* Vermelho para reprovado */
+  --cor-aviso: #ffc107; /* Amarelo para cursando */
+  --cor-texto: #333;
+  --cor-branco: #ffffff;
+  --cor-preto: #000000;
+  --cor-fundo: #f5f5f5;
+  --cor-cinza: #666;
+  --cor-cinza-claro: #eee;
+  --sombra-padrao: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --transicao-padrao: all 0.3s ease;
+  --fonte-principal: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  font-family: var(--fonte-principal);
+  line-height: 1.6;
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ===== HEADER FIXO ===== */
+.header {
+  background: var(--cor-preto);
+  color: var(--cor-branco);
+  position: sticky; /* Fixa no topo durante scroll */
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: var(--sombra-padrao);
+  transition: var(--transicao-padrao);
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-content {
+  max-width: 1400px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+/* ===== LOGO NO HEADER ===== */
+.logo-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-header img {
+  width: 80px; /* Tamanho reduzido para dashboard */
+  height: 80px;
+  object-fit: contain;
+  transition: var(--transicao-padrao);
+}
+
+.logo-text h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: var(--cor-branco);
+}
+
+.logo-text p {
+  font-size: 0.9rem;
+  color: var(--cor-primaria);
+  font-weight: 500;
+}
+
+/* ===== AÇÕES DO HEADER (LOGOUT) ===== */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-logout {
+  padding: 8px 15px;
+  background-color: var(--cor-erro);
+  color: var(--cor-branco);
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: var(--transicao-padrao);
+  cursor: pointer;
+  border: none;
+}
+
+.btn-logout:hover {
+  background-color: #c82333;
+}
+
+/* ===== LAYOUT PRINCIPAL DA DASHBOARD ===== */
+.main-layout {
+  max-width: 1400px;
+  margin: 2rem auto;
+  display: flex;
+  gap: 2rem;
+  padding: 0 2rem;
+  flex-grow: 1; /* Ocupa espaço restante */
+}
+
+/* ===== SIDEBAR DE NAVEGAÇÃO ===== */
+.sidebar {
+  width: 250px;
+  background: var(--cor-branco);
+  border-radius: 8px;
+  box-shadow: var(--sombra-padrao);
+  padding: 1.5rem;
+  height: fit-content; /* Ajusta ao conteúdo */
+  position: sticky; /* Fixa durante scroll */
+  top: 124px; /* Ajuste conforme altura do header */
+  border: 1px solid #ddd;
+}
+
+/* ===== INFORMAÇÕES DO USUÁRIO ===== */
+.user-info {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cor-cinza-claro);
+}
+
+.user-info h3 {
+  color: var(--cor-primaria);
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-info p {
+  color: var(--cor-cinza);
+  font-size: 0.9rem;
+}
+
+/* ===== MENU DA SIDEBAR ===== */
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-menu li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-menu a {
+  color: var(--cor-texto);
+  text-decoration: none;
+  padding: 10px 15px;
+  display: flex; /* Para ícone e texto */
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  transition: var(--transicao-padrao);
+  font-weight: 500;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+  background: var(--cor-primaria);
+  color: var(--cor-branco);
+}
+
+.sidebar-menu a svg {
+  fill: var(--cor-texto); /* Cor padrão do ícone */
+  transition: fill 0.3s ease;
+}
+
+.sidebar-menu a:hover svg,
+.sidebar-menu a.active svg {
+  fill: var(--cor-branco); /* Cor do ícone ao hover/ativo */
+}
+
+/* ===== ÁREA DE CONTEÚDO PRINCIPAL ===== */
+.content-area {
+  flex: 1;
+  background: var(--cor-branco);
+  border-radius: 8px;
+  box-shadow: var(--sombra-padrao);
+  overflow: hidden;
+  border: 1px solid #ddd;
+  padding: 2rem;
+}
+
+/* ===== SEÇÕES DE CONTEÚDO (CONTROLADAS POR JS) ===== */
+.content-section {
+  display: none; /* Escondido por padrão */
+  animation: fadeIn 0.5s ease;
+}
+
+.content-section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.content-section h2 {
+  color: var(--cor-primaria);
+  margin-bottom: 1.5rem;
+  font-size: 1.8em;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--cor-cinza-claro);
+}
+
+/* ===== CARDS DE INFORMAÇÃO ===== */
+.info-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.info-card {
+  background-color: #f8f8f8;
+  border: 1px solid var(--cor-cinza-claro);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-padrao);
+}
+
+.info-card h3 {
+  color: var(--cor-preto);
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-card h3 svg {
+  fill: var(--cor-primaria);
+}
+
+.info-card p {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.info-card .highlight {
+  font-weight: bold;
+  color: var(--cor-primaria);
+}
+
+/* ===== TABELA DO BOLETIM ===== */
+.boletim-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.boletim-table th,
+.boletim-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.boletim-table th {
+  background-color: var(--cor-primaria);
+  color: var(--cor-branco);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.boletim-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.boletim-table tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* ===== STATUS DAS DISCIPLINAS ===== */
+.status-aprovado {
+  color: var(--cor-sucesso);
+  font-weight: bold;
+}
+
+.status-reprovado {
+  color: var(--cor-erro);
+  font-weight: bold;
+}
+
+.status-cursando {
+  color: var(--cor-aviso);
+  font-weight: bold;
+}
+
+/* ===== DETALHES DA MATRÍCULA ===== */
+.matricula-details {
+  background-color: #f8f8f8;
+  border: 1px solid var(--cor-cinza-claro);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.matricula-details p {
+  margin-bottom: 0.8rem;
+  font-size: 1.05rem;
+  color: #444;
+}
+
+.matricula-details strong {
+  color: var(--cor-preto);
+}
+
+/* ===== FORMULÁRIO ALTERAR SENHA ===== */
+.form-alterar-senha {
+  margin-top: 1.5rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  border: 1px solid var(--cor-cinza-claro);
+  border-radius: 8px;
+  background-color: #fcfcfc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.form-alterar-senha label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.form-alterar-senha input[type="password"] {
+  width: calc(100% - 20px); /* Ajuste para padding */
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.form-alterar-senha button {
+  background-color: var(--cor-primaria);
+  color: var(--cor-branco);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: var(--transicao-padrao);
+}
+
+.form-alterar-senha button:hover {
+  background-color: #1a361a;
+}
+
+/* ===== MENSAGENS DE FEEDBACK ===== */
+#senhaMessage {
+  margin-top: 1rem;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
+  font-weight: bold;
+}
+
+#senhaMessage.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+#senhaMessage.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* ===== CALENDÁRIO ===== */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.calendar-header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  color: var(--cor-preto);
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: var(--cor-primaria);
+  padding: 5px;
+  border-radius: 50%;
+  transition: var(--transicao-padrao);
+}
+
+.calendar-header button:hover {
+  background-color: var(--cor-cinza-claro);
+}
+
+.calendar-day-name {
+  font-weight: bold;
+  color: #555;
+  padding: 8px 0;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+}
+
+.calendar-date {
+  padding: 10px 0;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transicao-padrao);
+}
+
+.calendar-date:hover {
+  background-color: #e5e5e5;
+}
+
+.calendar-date.current-month {
+  background-color: var(--cor-branco);
+  border: 1px solid #ddd;
+}
+
+.calendar-date.today {
+  background-color: var(--cor-primaria);
+  color: var(--cor-branco);
+  font-weight: bold;
+  border: 1px solid var(--cor-primaria);
+}
+
+.calendar-date.has-event {
+  border: 2px solid var(--cor-erro); /* Indica evento */
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--cor-preto);
+  color: var(--cor-branco);
+  padding: 2rem 0;
+  margin-top: 3rem;
+  width: 100%;
+}
+
+.footer-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.contact-info {
+  flex: 1;
+  min-width: 300px;
+  text-align: left;
+}
+
+.contact-info h3 {
+  color: var(--cor-branco);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.contact-item {
+  margin-bottom: 0.5rem;
+  color: #ccc;
+  font-size: 0.85rem;
+}
+
+.contact-item strong {
+  color: var(--cor-branco);
+}
+
+.contact-item a {
+  color: var(--cor-destaque);
+  text-decoration: none;
+}
+
+.contact-item a:hover {
+  text-decoration: underline;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 200px;
+  justify-content: flex-end;
+}
+
+.footer-social {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.social-link-footer {
+  width: 35px;
+  height: 35px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cor-branco);
+  transition: var(--transicao-padrao);
+  overflow: hidden;
+  border: 1px solid var(--cor-preto);
+}
+
+.social-link-footer:hover {
+  transform: translateY(-2px);
+  background: #f0f0f0;
+}
+
+.social-link-footer img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  .header-content,
+  .main-layout {
+    flex-direction: column;
+    padding: 0 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .logo-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: static;
+    margin-bottom: 2rem;
+    padding: 1rem;
+  }
+
+  .sidebar-menu a {
+    justify-content: center;
+  }
+
+  .content-area {
+    padding: 1rem;
+  }
+
+  .info-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .boletim-table,
+  .matricula-details,
+  .form-alterar-senha {
+    font-size: 0.9em;
+  }
+
+  .boletim-table th,
+  .boletim-table td {
+    padding: 8px;
+  }
+
+  .calendar-header {
+    font-size: 1.2em;
+  }
+
+  .calendar-header button {
+    font-size: 1.5em;
+  }
+
+  .calendar-day-name,
+  .calendar-date {
+    padding: 5px 0;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .contact-info,
+  .footer-right {
+    text-align: center;
+    justify-content: center;
+  }
+
+  .contact-info {
+    min-width: unset;
+    width: 100%;
+  }
+}

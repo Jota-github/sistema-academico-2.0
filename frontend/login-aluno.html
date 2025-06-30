@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configurações básicas da página HTML -->
+    <meta charset="UTF-8"> <!-- Permite usar acentos e caracteres especiais do português -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Faz a página se adaptar a telas de celular -->
+    <title>Login Aluno - Sistema Acadêmico</title>
+    
+    <!-- Arquivo CSS que define toda a aparência visual desta página -->
+    <link rel="stylesheet" href="css/style-login-aluno.css">
+    
+    <!-- Ícone que aparece na aba do navegador -->
+    <link rel="icon" href="imagens/logo-engenharia.png" type="image/png">
+</head>
+<body>
+    <!-- ==================== CONTAINER PRINCIPAL ==================== -->
+    <!-- Div que engloba toda a página e organiza o layout em duas colunas -->
+    <div class="container">
+        
+        <!-- ==================== PAINEL ESQUERDO ==================== -->
+        <!-- Lado esquerdo da tela com informações visuais e institucionais -->
+        <div class="left-panel">
+            
+            <!-- SEÇÃO DO LOGO: Logo + nome da instituição -->
+            <div class="logo-section">
+                <div class="logo-container">
+                    <!-- Logo oficial da instituição -->
+                    <img src="imagens/logo-engenharia.png" 
+                         alt="Logo oficial do curso de Engenharia de Software" 
+                         title="IFPE Campus Belo Jardim - Sistema Acadêmico de Engenharia de Software">
+                </div>
+                
+                <!-- Informações textuais sobre a instituição -->
+                <div class="institution-info">
+                    <div class="institution-name">SISTEMA ACADÊMICO</div>
+                    <div class="course-name">
+                        <!-- 'course-highlight' aplica estilo especial à palavra ENGENHARIA -->
+                        <span class="course-highlight">ENGENHARIA</span><br>DE SOFTWARE
+                    </div>
+                </div>
+            </div>
+            
+            <!-- MENSAGEM DE BOAS-VINDAS: Texto personalizado para alunos -->
+            <div class="welcome-text">
+                <h1>Bem-vindo, Aluno!</h1>
+                <p>Acesse sua área acadêmica com suas credenciais estudantis.</p>
+                
+                <!-- Informações sobre o que o aluno pode fazer no sistema -->
+                <div class="student-info">
+                    <h3>Portal do Estudante</h3>
+                    <p>Aqui você pode acessar suas notas, horários, materiais de aula e muito mais.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PAINEL DIREITO ==================== -->
+        <!-- Lado direito da tela com o formulário de login -->
+        <div class="right-panel">
+            
+            <!-- CONTAINER DO FORMULÁRIO: Organiza todos os elementos do formulário -->
+            <div class="form-container">
+                
+                <!-- CABEÇALHO DO FORMULÁRIO: Título e opções de navegação -->
+                <div class="form-header">
+                    <h2>Login do Aluno</h2>
+                    <p class="form-subtitle">Entre com suas credenciais estudantis</p>
+                    
+                    <!-- LINK PARA ÁREA DO PROFESSOR: Permite alternar entre tipos de login -->
+                    <div class="teacher-login">
+                        <a href="login-professor.html" 
+                           class="teacher-btn" 
+                           title="Clique para acessar a área de login dos professores">
+                            <div class="teacher-icon">
+                                <!-- Ícone visual para identificar a opção -->
+                                <img src="imagens/mini-logo.jpg" 
+                                     alt="Ícone representando área do professor" 
+                                     title="Ícone da área do professor - clique para alternar">
+                            </div>
+                            Área do Professor
+                        </a>
+                    </div>
+                    
+                    <!-- Linha visual para separar seções -->
+                    <div class="divider"></div> 
+                </div>
+
+                <!-- ==================== FORMULÁRIO DE LOGIN ==================== -->
+                <!-- Formulário onde o aluno digita email e senha -->
+                <!-- O 'id' é usado pelo JavaScript para capturar os dados -->
+                <form id="loginForm">
+                    
+                    <!-- CAMPO EMAIL: Input para o aluno digitar seu email -->
+                    <div class="input-group">
+                        <!-- 'type="email"' valida automaticamente se é um email válido -->
+                        <!-- 'required' torna o campo obrigatório -->
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               placeholder="Email estudantil" 
+                               required
+                               title="Digite seu email institucional ou pessoal cadastrado no sistema">
+                    </div>
+                    
+                    <!-- CAMPO SENHA: Input para a senha do aluno -->
+                    <div class="input-group">
+                        <!-- 'type="password"' esconde o texto digitado (mostra asteriscos) -->
+                        <input type="password" 
+                               id="senha" 
+                               name="senha" 
+                               placeholder="Senha" 
+                               required
+                               title="Digite sua senha de acesso ao sistema acadêmico">
+                    </div>
+                    
+                    <!-- BOTÃO DE ENVIO: Envia os dados do formulário quando clicado -->
+                    <button type="submit" 
+                            class="login-btn"
+                            title="Clique para fazer login e acessar o portal do aluno">
+                        Entrar como Aluno
+                    </button>
+                </form>
+
+                <!-- LINK PARA RECUPERAÇÃO DE SENHA -->
+                <div class="forgot-password">
+                    <a href="esqueceu-senha.html" 
+                       title="Clique aqui se esqueceu sua senha - será enviado um email para recuperação">
+                        Esqueceu sua senha?
+                    </a>
+                </div>
+
+                <!-- ÁREA PARA MENSAGENS: Mostra feedback de sucesso ou erro -->
+                <!-- Inicialmente vazia, preenchida pelo JavaScript -->
+                <p id="message"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT - LÓGICA DE PROGRAMAÇÃO ==================== -->
+    <script>
+    // ==================== SELEÇÃO DOS ELEMENTOS HTML ==================== 
+    // JavaScript precisa "encontrar" os elementos HTML para poder manipulá-los
+    // É como dar nomes aos elementos para poder referenciá-los depois
+    
+    const loginForm = document.getElementById('loginForm');         // O formulário completo
+    const messageElement = document.getElementById('message');      // Parágrafo para mensagens de feedback
+    const container = document.querySelector('.container');         // Container principal (para efeitos visuais)
+
+    // ==================== PROCESSAMENTO DO LOGIN ==================== 
+    // Este código é executado quando o aluno clica no botão "Entrar como Aluno"
+    // addEventListener() "escuta" eventos que acontecem na página
+    // 'submit' é o evento disparado quando um formulário é enviado
+    
+    loginForm.addEventListener('submit', async (event) => {
+        // ==================== PASSO 1: PREVENIR COMPORTAMENTO PADRÃO ==================== 
+        // Por padrão, quando um formulário é enviado, a página recarrega
+        // preventDefault() impede isso, permitindo controlar o que acontece
+        event.preventDefault();
+        
+        // ==================== PASSO 2: FEEDBACK VISUAL ==================== 
+        // Adiciona classe CSS que pode mostrar um spinner ou escurecer a tela
+        // Isso indica ao usuário que algo está acontecendo
+        container.classList.add('loading');
+        
+        // ==================== PASSO 3: COLETA DOS DADOS ==================== 
+        // Pega os valores que o usuário digitou nos campos
+        // event.target é o formulário que foi enviado
+        const email = event.target.email.value;    // Valor do campo com name="email"
+        const senha = event.target.senha.value;    // Valor do campo com name="senha"
+        
+        // ==================== PASSO 4: LIMPAR MENSAGENS ANTERIORES ==================== 
+        // Remove mensagens de tentativas anteriores para manter a interface limpa
+        messageElement.textContent = '';    // Remove o texto
+        messageElement.className = '';      // Remove classes CSS (cores)
+
+        try {
+            // ==================== COMUNICAÇÃO COM O SERVIDOR ==================== 
+            // Esta parte envia os dados para o servidor e aguarda a resposta
+            // 'await' pausa a execução até o servidor responder
+            // 'fetch' é a função moderna para fazer requisições HTTP
+            
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',                                     // POST é usado para enviar dados
+                headers: { 'Content-Type': 'application/json' },    // Informa que estamos enviando JSON
+                body: JSON.stringify({ email, senha })              // Converte dados para formato JSON
+            });
+
+            // Converte a resposta do servidor de JSON para objeto JavaScript
+            const data = await response.json();
+            
+            // Remove o efeito de carregamento assim que a resposta chega
+            container.classList.remove('loading');
+
+            // ==================== ANÁLISE DA RESPOSTA DO SERVIDOR ==================== 
+            if (response.ok) {
+                // ✅ LOGIN BEM-SUCEDIDO
+                // response.ok é true quando o status HTTP indica sucesso (200, 201, etc.)
+                
+                messageElement.textContent = 'Login realizado com sucesso!';
+                messageElement.classList.add('success');   // Classe CSS para cor verde
+                
+                // ==================== ARMAZENAMENTO DA SESSÃO ==================== 
+                // localStorage salva dados no navegador que persistem entre sessões
+                // É como uma "memória" que lembra que o usuário está logado
+                localStorage.setItem('authToken', data.token);          // Token de autenticação (chave de acesso)
+                localStorage.setItem('userType', data.usuario.tipo);    // Tipo de usuário (aluno, professor, etc.)
+                
+                // ==================== REDIRECIONAMENTO AUTOMÁTICO ==================== 
+                // Após meio segundo, leva o usuário para o portal do aluno
+                setTimeout(() => {
+                    window.location.href = 'portal-aluno.html';
+                }, 500); 
+                
+            } else {
+                // ❌ LOGIN COM ERRO
+                // Quando o servidor retorna erro (ex: email ou senha incorretos)
+                
+                // Mostra a mensagem de erro específica que veio do servidor
+                // Se não houver mensagem específica, usa uma mensagem padrão
+                messageElement.textContent = data.error || 'Credenciais inválidas.';
+                messageElement.classList.add('error');     // Classe CSS para cor vermelha
+            }
+            
+        } catch (error) {
+            // ==================== TRATAMENTO DE ERRO DE CONEXÃO ==================== 
+            // Este bloco é executado quando há problemas de rede
+            // Exemplos: servidor offline, sem internet, timeout, etc.
+            
+            container.classList.remove('loading');
+            messageElement.textContent = 'Não foi possível conectar ao servidor. Tente novamente mais tarde.';
+            messageElement.classList.add('error');
+            
+            // Em ambiente de desenvolvimento, mostra o erro no console para debug
+            console.error('Erro de conexão:', error);
+        }
+    });
+    </script>
+</body>
+</html>
