@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS Matriculas (
     media_final FLOAT,
     frequencia FLOAT,
     status VARCHAR(20) DEFAULT 'cursando' CHECK (status IN ('cursando', 'aprovado', 'reprovado')),
-    FOREIGN KEY (aluno_id) REFERENCES Alunos(id),
+    FOREIGN KEY (aluno_id) REFERENCES Alunos(id) ON DELETE CASCADE,
     FOREIGN KEY (turma_id) REFERENCES Turmas(id),
     UNIQUE(aluno_id, turma_id)
 );

@@ -2,17 +2,14 @@
  * ================================================================================
  * SERVIDOR BACKEND - PORTAL EDUCACIONAL (ALUNO/PROFESSOR)
  * ================================================================================
- * 
- * Este arquivo contém toda a lógica do servidor backend para o sistema de portal
+ * * Este arquivo contém toda a lógica do servidor backend para o sistema de portal
  * educacional, incluindo autenticação, gestão de usuários, notícias e boletins.
- * 
- * Tecnologias utilizadas:
+ * * Tecnologias utilizadas:
  * - Node.js + Express.js (servidor web)
  * - PostgreSQL (banco de dados)
  * - JWT (autenticação por tokens)
  * - CORS (controle de acesso entre origens)
- * 
- * Autor: Sistema Portal Educacional
+ * * Autor: Sistema Portal Educacional
  * Data: 2024
  * ================================================================================
  */
@@ -92,17 +89,14 @@ const pool = new Pool({
 
 /**
  * MIDDLEWARE DE VERIFICAÇÃO DE TOKEN
- * 
- * Esta função verifica se o usuário possui um token JWT válido antes de
+ * * Esta função verifica se o usuário possui um token JWT válido antes de
  * permitir acesso às rotas protegidas do sistema.
- * 
- * Fluxo de verificação:
+ * * Fluxo de verificação:
  * 1. Extrai o token do cabeçalho Authorization
  * 2. Valida o formato "Bearer TOKEN"
  * 3. Verifica a assinatura e validade do token
  * 4. Decodifica os dados do usuário e adiciona ao objeto req
- * 
- * @param {Object} req - Objeto de requisição HTTP
+ * * @param {Object} req - Objeto de requisição HTTP
  * @param {Object} res - Objeto de resposta HTTP  
  * @param {Function} next - Função para continuar para próximo middleware
  */
@@ -148,11 +142,9 @@ function verificarTokenEAutorizacao(req, res, next) {
 /**
  * ROTA: CADASTRO DE NOVOS USUÁRIOS
  * POST /usuarios
- * 
- * Permite que professores cadastrem novos usuários (alunos ou professores).
+ * * Permite que professores cadastrem novos usuários (alunos ou professores).
  * Utiliza transações para garantir consistência dos dados.
- * 
- * IMPORTANTE: Apenas professores podem cadastrar novos usuários
+ * * IMPORTANTE: Apenas professores podem cadastrar novos usuários
  * ATENÇÃO: Senhas são armazenadas em texto puro (não recomendado para produção)
  */
 app.post('/usuarios', verificarTokenEAutorizacao, async (req, res) => {
@@ -211,8 +203,7 @@ app.post('/usuarios', verificarTokenEAutorizacao, async (req, res) => {
 /**
  * ROTA: LOGIN DE ALUNO
  * POST /login
- * 
- * Autentica alunos usando email e senha.
+ * * Autentica alunos usando email e senha.
  * Retorna um token JWT para acesso às rotas protegidas.
  */
 app.post('/login', async (req, res) => {
@@ -260,8 +251,7 @@ app.post('/login', async (req, res) => {
 /**
  * ROTA: LOGIN DE PROFESSOR
  * POST /login/professor
- * 
- * Autentica professores usando CPF e senha.
+ * * Autentica professores usando CPF e senha.
  * Diferente do login de aluno, utiliza CPF como identificador.
  */
 app.post('/login/professor', async (req, res) => {
@@ -310,11 +300,9 @@ app.post('/login/professor', async (req, res) => {
 /**
  * ROTA: BUSCAR DETALHES DE USUÁRIO
  * GET /usuarios/:id
- * 
- * Retorna informações detalhadas de um usuário específico.
+ * * Retorna informações detalhadas de um usuário específico.
  * Inclui dados específicos de aluno ou professor conforme o tipo.
- * 
- * Controle de acesso: Usuário só pode ver seus próprios dados, exceto professores
+ * * Controle de acesso: Usuário só pode ver seus próprios dados, exceto professores
  */
 app.get('/usuarios/:id', verificarTokenEAutorizacao, async (req, res) => {
     const { id } = req.params;
@@ -356,8 +344,7 @@ app.get('/usuarios/:id', verificarTokenEAutorizacao, async (req, res) => {
 /**
  * ROTA: ALTERAÇÃO DE SENHA
  * POST /alterar-senha
- * 
- * Permite que usuários autenticados alterem suas senhas.
+ * * Permite que usuários autenticados alterem suas senhas.
  * Requer a senha atual para confirmação de segurança.
  */
 app.post('/alterar-senha', verificarTokenEAutorizacao, async (req, res) => {
@@ -398,8 +385,7 @@ app.post('/alterar-senha', verificarTokenEAutorizacao, async (req, res) => {
 /**
  * ROTA: CRIAR NOTÍCIA
  * POST /noticias
- * 
- * Permite que professores publiquem notícias no sistema.
+ * * Permite que professores publiquem notícias no sistema.
  * As notícias são exibidas no portal dos alunos.
  */
 app.post('/noticias', verificarTokenEAutorizacao, async (req, res) => {
@@ -422,8 +408,7 @@ app.post('/noticias', verificarTokenEAutorizacao, async (req, res) => {
 /**
  * ROTA: LISTAR NOTÍCIAS
  * GET /noticias
- * 
- * Retorna todas as notícias publicadas, ordenadas por data.
+ * * Retorna todas as notícias publicadas, ordenadas por data.
  * Inclui o nome do autor (professor) de cada notícia.
  */
 app.get('/noticias', async (req, res) => {
@@ -444,8 +429,7 @@ app.get('/noticias', async (req, res) => {
 /**
  * ROTA: BOLETIM DE ALUNO ESPECÍFICO (PARA PROFESSOR)
  * GET /boletins/aluno/:alunoId
- * 
- * Permite que professores consultem o boletim de qualquer aluno.
+ * * Permite que professores consultem o boletim de qualquer aluno.
  * Retorna todas as disciplinas, notas e frequência do aluno.
  */
 app.get('/boletins/aluno/:alunoId', verificarTokenEAutorizacao, async (req, res) => {
@@ -482,8 +466,7 @@ app.get('/boletins/aluno/:alunoId', verificarTokenEAutorizacao, async (req, res)
 /**
  * ROTA: BOLETIM DO ALUNO LOGADO
  * GET /alunos/boletim
- * 
- * Permite que alunos consultem seu próprio boletim.
+ * * Permite que alunos consultem seu próprio boletim.
  * Retorna apenas as informações do aluno autenticado.
  */
 app.get('/alunos/boletim', verificarTokenEAutorizacao, async (req, res) => {
@@ -524,8 +507,7 @@ app.get('/alunos/boletim', verificarTokenEAutorizacao, async (req, res) => {
 /**
  * ROTA: LISTAR TODOS OS ALUNOS
  * GET /alunos
- * 
- * Retorna lista completa de alunos para uso administrativo pelos professores.
+ * * Retorna lista completa de alunos para uso administrativo pelos professores.
  * Necessária para funcionalidades como consulta de boletins.
  */
 app.get('/alunos', verificarTokenEAutorizacao, async (req, res) => {
@@ -543,10 +525,57 @@ app.get('/alunos', verificarTokenEAutorizacao, async (req, res) => {
 });
 
 /**
+ * ROTA: REMOVER ALUNO (APENAS PROFESSORES)
+ * DELETE /alunos/:id
+ * * Permite que um professor remova um aluno do sistema.
+ * A exclusão na tabela 'Usuarios' aciona o ON DELETE CASCADE para limpar
+ * os registros relacionados nas tabelas 'Alunos' e 'Matriculas'.
+ */
+app.delete('/alunos/:id', verificarTokenEAutorizacao, async (req, res) => {
+    // Apenas professores podem remover alunos
+    if (req.usuario.tipo !== 'professor') {
+        return res.status(403).json({ error: 'Apenas professores podem remover alunos.' });
+    }
+
+    const { id } = req.params; // Este é o aluno_id
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN'); // Inicia a transação
+
+        // 1. Encontrar o usuario_id a partir do aluno_id
+        const alunoResult = await client.query('SELECT usuario_id FROM Alunos WHERE id = $1', [id]);
+        if (alunoResult.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: 'Aluno não encontrado.' });
+        }
+        const usuarioId = alunoResult.rows[0].usuario_id;
+
+        // 2. Deletar o registro da tabela Usuarios. O CASCADE cuidará do resto.
+        const deleteResult = await client.query('DELETE FROM Usuarios WHERE id = $1', [usuarioId]);
+
+        if (deleteResult.rowCount === 0) {
+            // Isso não deve acontecer se o passo 1 funcionou, mas é uma segurança
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: 'Falha ao encontrar o usuário para remover.' });
+        }
+
+        await client.query('COMMIT'); // Confirma a transação
+        res.status(200).json({ message: 'Aluno removido com sucesso.' });
+
+    } catch (error) {
+        await client.query('ROLLBACK'); // Desfaz em caso de erro
+        console.error('Erro ao remover aluno:', error);
+        res.status(500).json({ error: 'Ocorreu um erro interno ao remover o aluno.' });
+    } finally {
+        client.release();
+    }
+});
+
+/**
  * ROTA: TURMAS DO PROFESSOR
  * GET /professores/turmas
- * 
- * Retorna as turmas que o professor logado leciona.
+ * * Retorna as turmas que o professor logado leciona.
  * Inclui informações da disciplina, ano e semestre.
  */
 app.get('/professores/turmas', verificarTokenEAutorizacao, async (req, res) => {
@@ -567,8 +596,7 @@ app.get('/professores/turmas', verificarTokenEAutorizacao, async (req, res) => {
 /**
  * ROTA: ALUNOS DE UMA TURMA
  * GET /turmas/:turmaId/alunos
- * 
- * Retorna os alunos matriculados em uma turma específica.
+ * * Retorna os alunos matriculados em uma turma específica.
  * Útil para professores visualizarem suas turmas.
  */
 app.get('/turmas/:turmaId/alunos', verificarTokenEAutorizacao, async (req, res) => {
@@ -601,11 +629,9 @@ app.get('/turmas/:turmaId/alunos', verificarTokenEAutorizacao, async (req, res) 
 /**
  * ROTA: RECUPERAÇÃO DE SENHA
  * POST /recuperar-senha
- * 
- * Simula o envio de email para recuperação de senha.
+ * * Simula o envio de email para recuperação de senha.
  * Em produção, deveria gerar um token temporário e enviar por email real.
- * 
- * NOTA: Por segurança, sempre retorna sucesso, mesmo se o email não existir
+ * * NOTA: Por segurança, sempre retorna sucesso, mesmo se o email não existir
  */
 app.post('/recuperar-senha', async (req, res) => {
     const { email } = req.body;
@@ -635,8 +661,7 @@ app.post('/recuperar-senha', async (req, res) => {
 
 /**
  * INICIALIZAÇÃO DO SERVIDOR
- * 
- * Inicia o servidor Express na porta especificada e exibe mensagem de confirmação.
+ * * Inicia o servidor Express na porta especificada e exibe mensagem de confirmação.
  * O servidor ficará escutando requisições HTTP nesta porta.
  */
 app.listen(PORTA, () => {

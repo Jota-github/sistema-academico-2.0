@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         homeUserType: document.getElementById('homeUserType'),
         homeUserCPF: document.getElementById('homeUserCPF'),
         turmasTableBody: document.querySelector('#turmas-table tbody'),
+        todosAlunosTableBody: document.querySelector('#todos-alunos-table tbody'),
         formCadastroAluno: document.getElementById('formCadastroAluno'),
         cadastroMessage: document.getElementById('cadastroMessage'),
         listaAlunosContainer: document.getElementById('listaAlunosContainer'),
@@ -156,11 +157,80 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.boletimTableBody.innerHTML = '<tr><td colspan="7">Erro ao buscar boletim.</td></tr>';
         }
     }
+
+    async function loadAndDisplayAllStudents() {
+        elements.todosAlunosTableBody.innerHTML = '<tr><td colspan="4">Carregando alunos...</td></tr>';
+        try {
+            const response = await fetch('http://localhost:3000/alunos', {
+                headers: { 'Authorization': `Bearer ${portal.authToken}` }
+            });
+            if (!response.ok) throw new Error('Falha ao carregar a lista de alunos.');
+            
+            const alunos = await response.json();
+            elements.todosAlunosTableBody.innerHTML = ''; // Limpa a tabela
+
+            if (alunos.length > 0) {
+                alunos.forEach(aluno => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${aluno.nome_completo}</td>
+                        <td>${aluno.email}</td>
+                        <td>${aluno.matricula || 'N/A'}</td>
+                        <td>
+                            <button class="action-button btn-remover-aluno" data-aluno-id="${aluno.aluno_id}" data-aluno-nome="${aluno.nome_completo}" style="background-color: var(--cor-erro); padding: 5px 10px; font-size: 0.8em;">
+                                Remover
+                            </button>
+                        </td>
+                    `;
+                    elements.todosAlunosTableBody.appendChild(row);
+                });
+
+                // Adiciona o evento de clique para os novos botões
+                document.querySelectorAll('.btn-remover-aluno').forEach(button => {
+                    button.addEventListener('click', handleRemoveAlunoClick);
+                });
+
+            } else {
+                elements.todosAlunosTableBody.innerHTML = '<tr><td colspan="4">Nenhum aluno cadastrado no sistema.</td></tr>';
+            }
+        } catch (e) {
+            elements.todosAlunosTableBody.innerHTML = `<tr><td colspan="4">Erro ao carregar alunos: ${e.message}</td></tr>`;
+        }
+    }
+
+    async function handleRemoveAlunoClick(event) {
+        const alunoId = event.target.dataset.alunoId;
+        const alunoNome = event.target.dataset.alunoNome;
+
+        // Confirmação para evitar exclusão acidental
+        const isConfirmed = confirm(`Você tem certeza que deseja remover o aluno "${alunoNome}"?\n\nATENÇÃO: Esta ação é irreversível e removerá todos os dados do aluno, incluindo suas matrículas e notas.`);
+
+        if (isConfirmed) {
+            try {
+                const response = await fetch(`http://localhost:3000/alunos/${alunoId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${portal.authToken}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message);
+                    loadAndDisplayAllStudents(); // Atualiza a lista após a remoção
+                } else {
+                    throw new Error(data.error || 'Não foi possível remover o aluno.');
+                }
+            } catch (err) {
+                alert(`Erro: ${err.message}`);
+            }
+        }
+    }
     
     // Define o que fazer quando uma seção é trocada
     window.onSectionChange = (sectionId) => {
         if (sectionId === 'boletim-alunos') loadAlunosForBoletim();
         if (sectionId === 'gerenciar-turmas') loadProfessorTurmas();
+        if (sectionId === 'gerenciar-alunos') loadAndDisplayAllStudents();
     };
 
     // --- EVENT LISTENERS ESPECÍFICOS DO PROFESSOR ---
