@@ -1,3 +1,6 @@
+// PAGINAÇÃO DE ALUNOS MOCKADOS
+// PAGINAÇÃO DE ALUNOS
+
 document.addEventListener('DOMContentLoaded', async () => {
     // Inicializa o portal, esperando um 'professor'
     const portal = inicializarPortal('professor', '/login-professor.html');
@@ -24,7 +27,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         modalTurmaTitle: document.getElementById('modalTurmaTitle'),
         modalAlunosList: document.getElementById('modalAlunosList'),
         closeModalBtn: document.getElementById('closeModalBtn'),
-        // Novos elementos para o modal de confirmação
         confirmRemovalModal: document.getElementById('confirmRemovalModal'),
         closeRemovalModalBtn: document.getElementById('closeRemovalModalBtn'),
         studentNameToConfirm: document.getElementById('studentNameToConfirm'),
@@ -32,20 +34,93 @@ document.addEventListener('DOMContentLoaded', async () => {
         confirmRemovalBtn: document.getElementById('confirmRemovalBtn'),
     };
 
-    // --- FUNÇÕES ESPECÍFICAS DO PROFESSOR ---
+    // --- PAGINAÇÃO DE ALUNOS ---
+    let alunosPaginaAtual = 1;
+    let alunosTotalPaginas = 1;
+    const alunosPorPagina = 50;
+    let tempoProcessamento = 0;
+
+    const verMaisBtn = document.createElement('button');
+    verMaisBtn.textContent = 'Ver mais';
+    verMaisBtn.style.margin = '1em auto';
+    verMaisBtn.style.display = 'block';
+    verMaisBtn.style.padding = '10px 20px';
+    verMaisBtn.style.fontSize = '1em';
+    verMaisBtn.style.backgroundColor = '#2d6a4f';
+    verMaisBtn.style.color = '#fff';
+    verMaisBtn.style.border = 'none';
+    verMaisBtn.style.borderRadius = '5px';
+    verMaisBtn.style.cursor = 'pointer';
+
+    const tempoSpan = document.createElement('span');
+    tempoSpan.style.display = 'block';
+    tempoSpan.style.margin = '1em 0';
+    tempoSpan.style.fontWeight = 'bold';
+
+    async function carregarAlunos(pagina = 1) {
+        elements.todosAlunosTableBody.innerHTML = '<tr><td colspan="4">Carregando alunos...</td></tr>';
+        try {
+            const response = await fetch(`http://localhost:3000/alunos?page=${pagina}&limit=${alunosPorPagina}`, {
+                headers: { 'Authorization': `Bearer ${portal.authToken}` }
+            });
+            if (!response.ok) throw new Error('Falha ao carregar a lista de alunos.');
+            const data = await response.json();
+            const alunos = data.alunos || [];
+            alunosPaginaAtual = data.page;
+            alunosTotalPaginas = data.totalPages;
+            tempoProcessamento = data.tempo_ms;
+            tempoSpan.textContent = `Tempo de processamento: ${tempoProcessamento} ms`;
+            if (pagina === 1) elements.todosAlunosTableBody.innerHTML = '';
+            if (alunos.length > 0) {
+                alunos.forEach(aluno => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${aluno.nome_completo}</td>
+                        <td>${aluno.email || 'undefined'}</td>
+                        <td>${aluno.matricula || 'N/A'}</td>
+                        <td>
+                            <button class="action-button btn-remover-aluno" data-aluno-id="${aluno.aluno_id || aluno.usuario_id}" data-aluno-nome="${aluno.nome_completo}" style="background-color: var(--cor-erro); padding: 5px 10px; font-size: 0.8em;">
+                                Remover
+                            </button>
+                        </td>
+                    `;
+                    elements.todosAlunosTableBody.appendChild(row);
+                });
+                document.querySelectorAll('.btn-remover-aluno').forEach(button => {
+                    button.addEventListener('click', handleRemoveAlunoClick);
+                });
+            }
+            if (alunosPaginaAtual < alunosTotalPaginas) {
+                verMaisBtn.disabled = false;
+                verMaisBtn.style.display = 'block';
+            } else {
+                verMaisBtn.style.display = 'none';
+            }
+        } catch (e) {
+            elements.todosAlunosTableBody.innerHTML = `<tr><td colspan="4">Erro ao carregar alunos: ${e.message}</td></tr>`;
+        }
+    }
+
+    verMaisBtn.onclick = () => {
+        verMaisBtn.disabled = true;
+        carregarAlunos(alunosPaginaAtual + 1);
+    };
+
+    elements.todosAlunosTableBody.parentElement.appendChild(tempoSpan);
+    elements.todosAlunosTableBody.parentElement.appendChild(verMaisBtn);
+
+    // --- MODAIS ---
     const openModal = () => elements.alunosTurmaModal.style.display = 'flex';
     const closeModal = () => elements.alunosTurmaModal.style.display = 'none';
-
-    // Função para fechar o novo modal de remoção
     const closeRemovalModal = () => {
         elements.confirmRemovalModal.style.display = 'none';
-        elements.studentNameInput.value = ''; // Limpa o input
-        elements.confirmRemovalBtn.disabled = true; // Desabilita o botão por segurança
+        elements.studentNameInput.value = '';
+        elements.confirmRemovalBtn.disabled = true;
         elements.confirmRemovalBtn.style.backgroundColor = '#ccc';
         elements.confirmRemovalBtn.style.cursor = 'not-allowed';
     };
 
-
+    // --- FUNÇÕES DE TURMAS E BOLETIM ---
     async function loadProfessorTurmas() {
         elements.turmasTableBody.innerHTML = '<tr><td colspan="5">Carregando turmas...</td></tr>';
         try {
@@ -75,7 +150,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.turmasTableBody.innerHTML = '<tr><td colspan="5">Erro ao carregar turmas.</td></tr>';
         }
     }
-    
+
     async function handleVerAlunosClick(event) {
         const turmaId = event.target.dataset.turmaId;
         const turmaNome = event.target.dataset.turmaNome;
@@ -128,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.alunosList.innerHTML = '<li>Erro de conexão.</li>';
         }
     }
-    
+
     async function viewBoletimAluno(alunoId) {
         elements.listaAlunosContainer.style.display = 'none';
         elements.boletimAlunoDetalhes.style.display = 'block';
@@ -145,80 +220,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (data.boletim.length > 0) {
                 data.boletim.forEach(item => {
                     const row = document.createElement('tr');
-                    const statusClass = item.status ? `status-${item.status.toLowerCase()}` : '';
                     row.innerHTML = `
                         <td>${item.disciplina_nome}</td>
                         <td>${item.nota1 ?? 'N/A'}</td>
                         <td>${item.nota2 ?? 'N/A'}</td>
                         <td>${item.media_final ?? 'N/A'}</td>
                         <td>${item.frequencia ?? 'N/A'}%</td>
-                        <td class="${statusClass}">${item.status ? item.status.charAt(0).toUpperCase() + item.status.slice(1) : 'N/A'}</td>
+                        <td class="${item.status}">${item.status.charAt(0).toUpperCase() + item.status.slice(1)}</td>
                         <td>${item.ano}/${item.semestre}</td>
                     `;
                     elements.boletimTableBody.appendChild(row);
                 });
             } else {
-                elements.boletimTableBody.innerHTML = '<tr><td colspan="7">Nenhuma matrícula encontrada para este aluno.</td></tr>';
+                elements.boletimTableBody.innerHTML = '<tr><td colspan="7">Nenhuma matrícula encontrada.</td></tr>';
             }
         } catch (e) {
             elements.boletimTableBody.innerHTML = '<tr><td colspan="7">Erro ao buscar boletim.</td></tr>';
         }
     }
 
-    async function loadAndDisplayAllStudents() {
-        elements.todosAlunosTableBody.innerHTML = '<tr><td colspan="4">Carregando alunos...</td></tr>';
-        try {
-            const response = await fetch('http://localhost:3000/alunos', {
-                headers: { 'Authorization': `Bearer ${portal.authToken}` }
-            });
-            if (!response.ok) throw new Error('Falha ao carregar a lista de alunos.');
-            
-            const alunos = await response.json();
-            elements.todosAlunosTableBody.innerHTML = ''; // Limpa a tabela
-
-            if (alunos.length > 0) {
-                alunos.forEach(aluno => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${aluno.nome_completo}</td>
-                        <td>${aluno.email}</td>
-                        <td>${aluno.matricula || 'N/A'}</td>
-                        <td>
-                            <button class="action-button btn-remover-aluno" data-aluno-id="${aluno.aluno_id}" data-aluno-nome="${aluno.nome_completo}" style="background-color: var(--cor-erro); padding: 5px 10px; font-size: 0.8em;">
-                                Remover
-                            </button>
-                        </td>
-                    `;
-                    elements.todosAlunosTableBody.appendChild(row);
-                });
-
-                // Adiciona o evento de clique para os novos botões
-                document.querySelectorAll('.btn-remover-aluno').forEach(button => {
-                    button.addEventListener('click', handleRemoveAlunoClick);
-                });
-
-            } else {
-                elements.todosAlunosTableBody.innerHTML = '<tr><td colspan="4">Nenhum aluno cadastrado no sistema.</td></tr>';
-            }
-        } catch (e) {
-            elements.todosAlunosTableBody.innerHTML = `<tr><td colspan="4">Erro ao carregar alunos: ${e.message}</td></tr>`;
-        }
-    }
-
-    // NOVA LÓGICA DE REMOÇÃO
+    // --- REMOÇÃO DE ALUNO ---
     async function handleRemoveAlunoClick(event) {
         const alunoId = event.target.dataset.alunoId;
         const alunoNome = event.target.dataset.alunoNome;
-
-        // Prepara e abre o modal de confirmação
         elements.studentNameToConfirm.textContent = alunoNome;
         elements.confirmRemovalModal.style.display = 'flex';
-
-        // Remove listeners antigos para evitar múltiplas execuções
         elements.studentNameInput.oninput = null;
         elements.confirmRemovalBtn.onclick = null;
-
-        // Validação em tempo real
         elements.studentNameInput.oninput = () => {
             if (elements.studentNameInput.value === alunoNome) {
                 elements.confirmRemovalBtn.disabled = false;
@@ -230,8 +258,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 elements.confirmRemovalBtn.style.cursor = 'not-allowed';
             }
         };
-
-        // Define o que o botão de confirmação fará
         elements.confirmRemovalBtn.onclick = () => executeRemoval(alunoId);
     }
 
@@ -241,13 +267,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${portal.authToken}` }
             });
-
             const data = await response.json();
-
             if (response.ok) {
                 alert(data.message);
                 closeRemovalModal();
-                loadAndDisplayAllStudents(); // Atualiza a lista após a remoção
+                carregarAlunos(1);
             } else {
                 throw new Error(data.error || 'Não foi possível remover o aluno.');
             }
@@ -255,15 +279,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert(`Erro: ${err.message}`);
         }
     }
-    
-    // Define o que fazer quando uma seção é trocada
+
+    // --- EVENTOS E INICIALIZAÇÃO ---
     window.onSectionChange = (sectionId) => {
         if (sectionId === 'boletim-alunos') loadAlunosForBoletim();
         if (sectionId === 'gerenciar-turmas') loadProfessorTurmas();
-        if (sectionId === 'gerenciar-alunos') loadAndDisplayAllStudents();
+        if (sectionId === 'gerenciar-alunos') carregarAlunos(1);
     };
 
-    // --- EVENT LISTENERS ESPECÍFICOS DO PROFESSOR ---
     elements.formCadastroAluno.addEventListener('submit', async (e) => {
         e.preventDefault();
         const msgEl = elements.cadastroMessage;
@@ -288,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             msgEl.className = `form-message ${response.ok ? 'success' : 'error'}`;
             if (response.ok) {
                 e.target.reset();
-                loadAndDisplayAllStudents();
+                carregarAlunos(1);
             }
         } catch (err) {
             msgEl.textContent = 'Erro de conexão.';
@@ -296,11 +319,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         msgEl.style.display = 'block';
     });
-    
+
     elements.btnVoltarLista.addEventListener('click', loadAlunosForBoletim);
     elements.closeModalBtn.addEventListener('click', closeModal);
     elements.closeRemovalModalBtn.addEventListener('click', closeRemovalModal);
-    
     window.addEventListener('click', (event) => {
         if (event.target == elements.alunosTurmaModal) closeModal();
         if (event.target == elements.confirmRemovalModal) closeRemovalModal();
@@ -315,4 +337,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         elements.homeUserCPF.textContent = userData.professor_info?.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") || 'N/A';
     }
     loadProfessorTurmas();
+    carregarAlunos(1);
 });
