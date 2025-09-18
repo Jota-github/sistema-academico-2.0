@@ -455,3 +455,13 @@ body {
 #modalAlunosList li:last-child {
   border-bottom: none;
 }
+
+/* Estilos para o novo modal de confirmação de remoção */
+#confirmRemovalModal .action-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}

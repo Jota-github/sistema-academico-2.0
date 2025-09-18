@@ -24,20 +24,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         modalTurmaTitle: document.getElementById('modalTurmaTitle'),
         modalAlunosList: document.getElementById('modalAlunosList'),
         closeModalBtn: document.getElementById('closeModalBtn'),
+        // Novos elementos para o modal de confirmação
+        confirmRemovalModal: document.getElementById('confirmRemovalModal'),
+        closeRemovalModalBtn: document.getElementById('closeRemovalModalBtn'),
+        studentNameToConfirm: document.getElementById('studentNameToConfirm'),
+        studentNameInput: document.getElementById('studentNameInput'),
+        confirmRemovalBtn: document.getElementById('confirmRemovalBtn'),
     };
-
-    // Carrega dados e preenche campos específicos do professor
-    const userData = await portal.loadUserData();
-    if (userData) {
-        elements.homeUserName.textContent = userData.nome_completo;
-        elements.homeUserEmail.textContent = userData.email;
-        elements.homeUserType.textContent = userData.tipo.charAt(0).toUpperCase() + userData.tipo.slice(1);
-        elements.homeUserCPF.textContent = userData.professor_info?.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") || 'N/A';
-    }
 
     // --- FUNÇÕES ESPECÍFICAS DO PROFESSOR ---
     const openModal = () => elements.alunosTurmaModal.style.display = 'flex';
     const closeModal = () => elements.alunosTurmaModal.style.display = 'none';
+
+    // Função para fechar o novo modal de remoção
+    const closeRemovalModal = () => {
+        elements.confirmRemovalModal.style.display = 'none';
+        elements.studentNameInput.value = ''; // Limpa o input
+        elements.confirmRemovalBtn.disabled = true; // Desabilita o botão por segurança
+        elements.confirmRemovalBtn.style.backgroundColor = '#ccc';
+        elements.confirmRemovalBtn.style.cursor = 'not-allowed';
+    };
+
 
     async function loadProfessorTurmas() {
         elements.turmasTableBody.innerHTML = '<tr><td colspan="5">Carregando turmas...</td></tr>';
@@ -198,31 +205,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // NOVA LÓGICA DE REMOÇÃO
     async function handleRemoveAlunoClick(event) {
         const alunoId = event.target.dataset.alunoId;
         const alunoNome = event.target.dataset.alunoNome;
 
-        // Confirmação para evitar exclusão acidental
-        const isConfirmed = confirm(`Você tem certeza que deseja remover o aluno "${alunoNome}"?\n\nATENÇÃO: Esta ação é irreversível e removerá todos os dados do aluno, incluindo suas matrículas e notas.`);
+        // Prepara e abre o modal de confirmação
+        elements.studentNameToConfirm.textContent = alunoNome;
+        elements.confirmRemovalModal.style.display = 'flex';
 
-        if (isConfirmed) {
-            try {
-                const response = await fetch(`http://localhost:3000/alunos/${alunoId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${portal.authToken}` }
-                });
+        // Remove listeners antigos para evitar múltiplas execuções
+        elements.studentNameInput.oninput = null;
+        elements.confirmRemovalBtn.onclick = null;
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert(data.message);
-                    loadAndDisplayAllStudents(); // Atualiza a lista após a remoção
-                } else {
-                    throw new Error(data.error || 'Não foi possível remover o aluno.');
-                }
-            } catch (err) {
-                alert(`Erro: ${err.message}`);
+        // Validação em tempo real
+        elements.studentNameInput.oninput = () => {
+            if (elements.studentNameInput.value === alunoNome) {
+                elements.confirmRemovalBtn.disabled = false;
+                elements.confirmRemovalBtn.style.backgroundColor = 'var(--cor-erro)';
+                elements.confirmRemovalBtn.style.cursor = 'pointer';
+            } else {
+                elements.confirmRemovalBtn.disabled = true;
+                elements.confirmRemovalBtn.style.backgroundColor = '#ccc';
+                elements.confirmRemovalBtn.style.cursor = 'not-allowed';
             }
+        };
+
+        // Define o que o botão de confirmação fará
+        elements.confirmRemovalBtn.onclick = () => executeRemoval(alunoId);
+    }
+
+    async function executeRemoval(alunoId) {
+        try {
+            const response = await fetch(`http://localhost:3000/alunos/${alunoId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${portal.authToken}` }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+                closeRemovalModal();
+                loadAndDisplayAllStudents(); // Atualiza a lista após a remoção
+            } else {
+                throw new Error(data.error || 'Não foi possível remover o aluno.');
+            }
+        } catch (err) {
+            alert(`Erro: ${err.message}`);
         }
     }
     
@@ -258,7 +288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             msgEl.className = `form-message ${response.ok ? 'success' : 'error'}`;
             if (response.ok) {
                 e.target.reset();
-                loadAlunosForBoletim();
+                loadAndDisplayAllStudents();
             }
         } catch (err) {
             msgEl.textContent = 'Erro de conexão.';
@@ -269,10 +299,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     elements.btnVoltarLista.addEventListener('click', loadAlunosForBoletim);
     elements.closeModalBtn.addEventListener('click', closeModal);
+    elements.closeRemovalModalBtn.addEventListener('click', closeRemovalModal);
+    
     window.addEventListener('click', (event) => {
         if (event.target == elements.alunosTurmaModal) closeModal();
+        if (event.target == elements.confirmRemovalModal) closeRemovalModal();
     });
 
-    // Carrega dados iniciais do professor
+    // Carrega dados iniciais do portal
+    const userData = await portal.loadUserData();
+    if (userData) {
+        elements.homeUserName.textContent = userData.nome_completo;
+        elements.homeUserEmail.textContent = userData.email;
+        elements.homeUserType.textContent = userData.tipo.charAt(0).toUpperCase() + userData.tipo.slice(1);
+        elements.homeUserCPF.textContent = userData.professor_info?.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4") || 'N/A';
+    }
     loadProfessorTurmas();
 });

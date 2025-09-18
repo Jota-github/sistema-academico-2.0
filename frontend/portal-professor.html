@@ -6,19 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Portal do Professor - Sistema Acadêmico</title>
     
-    <!-- Arquivo CSS que define toda a aparência visual do portal do professor -->
     <link rel="stylesheet" href="/css/style-portal-professor.css">
     
-    <!-- Ícone que aparece na aba do navegador -->
     <link rel="icon" href="/imagens/logo-engenharia.png" type="image/png">
 </head>
 <body>
-    <!-- ==================== CABEÇALHO FIXO ==================== -->
-    <!-- Barra superior que permanece visível durante toda a navegação -->
     <header class="header">
         <div class="header-content">
             
-            <!-- LADO ESQUERDO: Logo e identificação da instituição -->
             <div class="logo-header">
                 <img src="/imagens/logo-engenharia.png" 
                      alt="Logo oficial do curso de Engenharia de Software" 
@@ -29,14 +24,11 @@
                 </div>
             </div>
             
-            <!-- LADO DIREITO: Informações do usuário e controles -->
             <div class="header-actions">
-                <!-- Nome do professor será preenchido dinamicamente pelo JavaScript -->
                 <span id="userName" 
                       style="color: #eee; font-weight: 500; margin-right: 1rem;"
                       title="Nome do professor logado"></span>
                 
-                <!-- Botão para fazer logout (sair do sistema) -->
                 <button class="btn-logout" 
                         id="logoutBtn"
                         title="Clique para sair do sistema e voltar à página inicial">
@@ -46,27 +38,20 @@
         </div>
     </header>
 
-    <!-- ==================== LAYOUT PRINCIPAL ==================== -->
     <div class="main-layout">
         
-        <!-- ==================== BARRA LATERAL (SIDEBAR) ==================== -->
         <aside class="sidebar">
             
-            <!-- INFORMAÇÕES DO USUÁRIO: Dados básicos do professor logado -->
             <div class="user-info">
-                <!-- Estes elementos serão preenchidos pelo JavaScript após o login -->
                 <h3 id="sidebarUserName" title="Nome completo do professor"></h3>
                 <p id="sidebarUserEmail" title="Email do professor"></p>
                 <p id="sidebarUserType" title="Tipo de usuário (Professor)"></p>
             </div>
 
-            <!-- MENU PRINCIPAL: Lista de funcionalidades disponíveis para professores -->
             <ul class="sidebar-menu">
                 
-                <!-- PÁGINA INICIAL: Dashboard com resumo das informações do professor -->
                 <li>
                     <a href="#" data-section="inicio" class="active" title="Ir para a página inicial do portal">
-                        <!-- Ícone SVG de casa/home -->
                         <svg viewBox="0 0 24 24" width="20" height="20">
                             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
                         </svg>
@@ -74,10 +59,8 @@
                     </a>
                 </li>
                 
-                <!-- GERENCIAR TURMAS: Visualização e administração das turmas do professor -->
                 <li>
                     <a href="#" data-section="gerenciar-turmas" title="Ver e gerenciar suas turmas e disciplinas">
-                        <!-- Ícone SVG de turma/classe -->
                         <svg viewBox="0 0 24 24" width="20" height="20">
                             <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 9h-2.5v2.5h-3V11H8V8h2.5V5.5h3V8H16v3z"></path>
                         </svg>
@@ -85,10 +68,8 @@
                     </a>
                 </li>
 
-                <!-- GERENCIAR ALUNOS: Visualização e administração de todos os alunos -->
                 <li>
                     <a href="#" data-section="gerenciar-alunos" title="Ver e gerenciar todos os alunos cadastrados">
-                        <!-- Ícone SVG de grupo de pessoas -->
                         <svg viewBox="0 0 24 24" width="20" height="20">
                             <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path>
                         </svg>
@@ -96,10 +77,8 @@
                     </a>
                 </li>
                 
-                <!-- CADASTRAR ALUNO: Formulário para adicionar novos alunos ao sistema -->
                 <li>
                     <a href="#" data-section="cadastrar-aluno" title="Cadastrar novos alunos no sistema">
-                        <!-- Ícone SVG de adicionar pessoa -->
                         <svg viewBox="0 0 24 24" width="20" height="20">
                             <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
                         </svg>
@@ -107,10 +86,8 @@
                     </a>
                 </li>
                 
-                <!-- BOLETIM ALUNOS: Visualização das notas de qualquer aluno -->
                 <li>
                     <a href="#" data-section="boletim-alunos" title="Ver boletim e notas de qualquer aluno">
-                        <!-- Ícone SVG de relatório/gráfico -->
                         <svg viewBox="0 0 24 24" width="20" height="20">
                             <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path>
                         </svg>
@@ -120,20 +97,15 @@
             </ul>
         </aside>
 
-        <!-- ==================== ÁREA DE CONTEÚDO PRINCIPAL ==================== -->
         <main class="content-area">
             
-            <!-- ==================== SEÇÃO: PÁGINA INICIAL ==================== -->
             <section id="inicio" class="content-section active">
                 <h2>Página Inicial</h2>
                 
-                <!-- GRID RESPONSIVO: Organiza os cards informativos em colunas -->
                 <div class="info-cards-grid">
                     
-                    <!-- CARD: Informações pessoais e profissionais do professor -->
                     <div class="info-card">
                         <h3>Meu Perfil</h3>
-                        <!-- Cada span será preenchido com dados reais via JavaScript -->
                         <p><strong>Nome:</strong> <span id="homeUserName" title="Nome completo do professor"></span></p>
                         <p><strong>Email:</strong> <span id="homeUserEmail" title="Email de contato do professor"></span></p>
                         <p><strong>Tipo:</strong> <span id="homeUserType" title="Tipo de usuário no sistema"></span></p>
@@ -142,13 +114,10 @@
                 </div>
             </section>
 
-            <!-- ==================== SEÇÃO: GERENCIAR TURMAS ==================== -->
             <section id="gerenciar-turmas" class="content-section">
                 <h2>Gerenciar Turmas</h2>
                 
-                <!-- TABELA DE TURMAS: Será dinamicamente populada com dados da API -->
                 <table class="custom-table" id="turmas-table">
-                    <!-- CABEÇALHO DA TABELA: Define as colunas de informações das turmas -->
                     <thead>
                         <tr>
                             <th title="Código da disciplina + ano/semestre">Código</th>
@@ -158,19 +127,15 @@
                             <th title="Ações disponíveis">Ações</th>
                         </tr>
                     </thead>
-                    <!-- CORPO DA TABELA: Será preenchido dinamicamente via JavaScript -->
                     <tbody></tbody>
                 </table>
             </section>
 
-            <!-- ==================== SEÇÃO: GERENCIAR ALUNOS ==================== -->
             <section id="gerenciar-alunos" class="content-section">
                 <h2>Gerenciar Alunos Cadastrados</h2>
                 <p>Aqui você pode visualizar todos os alunos do sistema e remover cadastros.</p>
                 
-                <!-- TABELA DE ALUNOS: Lista todos os alunos com opções de gerenciamento -->
                 <table class="custom-table" id="todos-alunos-table">
-                    <!-- CABEÇALHO: Informações básicas dos alunos -->
                     <thead>
                         <tr>
                             <th>Nome Completo</th>
@@ -179,97 +144,75 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <!-- CORPO DA TABELA: Será preenchido com dados de todos os alunos -->
-                    <!-- Incluirá botões para editar, remover ou ver detalhes de cada aluno -->
                     <tbody>
-                        <!-- Dados carregados dinamicamente via JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </section>
 
-            <!-- ==================== SEÇÃO: CADASTRAR ALUNO ==================== -->
             <section id="cadastrar-aluno" class="content-section">
                 <h2>Cadastrar Novo Aluno</h2>
                 
-                <!-- FORMULÁRIO DE CADASTRO: Com validação client-side e server-side -->
                 <form id="formCadastroAluno" class="custom-form">
                     
-                    <!-- Campo obrigatório: Nome completo do aluno -->
                     <label for="alunoNomeCompleto">Nome Completo:</label>
                     <input type="text" 
                            id="alunoNomeCompleto" 
                            required
                            title="Digite o nome completo do aluno">
                     
-                    <!-- Campo obrigatório: Email que será usado para login -->
                     <label for="alunoEmail">Email:</label>
                     <input type="email" 
                            id="alunoEmail" 
                            required
                            title="Digite um email válido que será usado para login">
                     
-                    <!-- Campo obrigatório: Senha inicial do aluno -->
                     <label for="alunoSenha">Senha:</label>
                     <input type="password" 
                            id="alunoSenha" 
                            required
                            title="Defina uma senha inicial para o aluno">
                     
-                    <!-- Campo opcional: Número de matrícula -->
                     <label for="alunoMatricula">Matrícula (Opcional):</label>
                     <input type="text" 
                            id="alunoMatricula"
                            title="Número de matrícula do aluno (pode ser deixado em branco)">
                     
-                    <!-- Campo opcional: Curso (pré-preenchido) -->
                     <label for="alunoCurso">Curso (Opcional):</label>
                     <input type="text" 
                            id="alunoCurso" 
                            value="Engenharia de Software"
                            title="Nome do curso (pré-preenchido com Engenharia de Software)">
                     
-                    <!-- Campo opcional: Período/semestre atual -->
                     <label for="alunoPeriodo">Período (Opcional):</label>
                     <input type="number" 
                            id="alunoPeriodo"
                            title="Período/semestre atual do aluno (número)">
                     
-                    <!-- Botão de submissão do formulário -->
                     <button type="submit" title="Clique para cadastrar o novo aluno">Cadastrar Aluno</button>
                     
-                    <!-- Div para mostrar mensagens de sucesso ou erro -->
-                    <!-- Inicialmente oculta, aparece apenas quando há feedback -->
                     <div id="cadastroMessage" class="form-message"></div>
                 </form>
             </section>
 
-            <!-- ==================== SEÇÃO: BOLETIM DOS ALUNOS ==================== -->
             <section id="boletim-alunos" class="content-section">
                 <h2>Boletim dos Alunos</h2>
                 
-                <!-- CONTAINER DA LISTA: Mostra todos os alunos para seleção -->
                 <div id="listaAlunosContainer">
                     <p>Selecione um aluno para visualizar seu boletim:</p>
-                    <!-- Lista será populada dinamicamente com todos os alunos -->
                     <ul id="alunosList" class="aluno-list-boletim"></ul>
                 </div>
 
-                <!-- CONTAINER DOS DETALHES: Mostra o boletim completo do aluno selecionado -->
                 <div id="boletimAlunoDetalhes">
-                    <!-- Botão para voltar à lista de alunos -->
                     <button class="back-button" 
                             id="btnVoltarLista"
                             title="Voltar para a lista de alunos">
                         ← Voltar à Lista
                     </button>
                     
-                    <!-- Informações básicas do aluno selecionado -->
                     <h3 id="boletimAlunoNome"></h3>
                     <p>Matrícula: <span id="boletimAlunoMatricula"></span></p>
                     
-                    <!-- TABELA DE NOTAS: Boletim completo do aluno -->
                     <table class="custom-table">
-                        <!-- CABEÇALHO: Colunas com informações acadêmicas -->
                         <thead>
                             <tr>
                                 <th title="Nome da disciplina">Disciplina</th>
@@ -281,7 +224,6 @@
                                 <th title="Período em que cursou">Ano/Semestre</th>
                             </tr>
                         </thead>
-                        <!-- CORPO DA TABELA: Será preenchido com as notas do aluno selecionado -->
                         <tbody id="boletimTableBody"></tbody>
                     </table>
                 </div>
@@ -289,25 +231,38 @@
         </main>
     </div>
 
-    <!-- ==================== MODAL: ALUNOS DA TURMA ==================== -->
     <div id="alunosTurmaModal" class="modal">
         <div class="modal-content">
             
-            <!-- CABEÇALHO DO MODAL: Título e botão de fechar -->
             <div class="modal-header">
                 <h3 id="modalTurmaTitle">Alunos da Turma</h3>
-                <!-- Botão X para fechar o modal -->
                 <span class="close-button" 
                       id="closeModalBtn"
                       title="Fechar janela">&times;</span>
             </div>
             
-            <!-- LISTA DE ALUNOS: Será populada com os alunos da turma selecionada -->
             <ul id="modalAlunosList"></ul>
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT ==================== -->
+    <div id="confirmRemovalModal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 id="modalRemovalTitle">Confirmar Remoção</h3>
+                <span class="close-button" id="closeRemovalModalBtn" title="Cancelar">&times;</span>
+            </div>
+            <div id="modalRemovalBody">
+                <p>Esta ação é <strong>irreversível</strong> e removerá todos os dados do aluno, incluindo matrículas e notas.</p>
+                <p>Para confirmar, por favor, digite o nome completo do aluno: <strong id="studentNameToConfirm"></strong></p>
+                <input type="text" id="studentNameInput" placeholder="Digite o nome aqui para confirmar" style="width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <button id="confirmRemovalBtn" class="action-button" disabled style="background-color: #ccc; cursor: not-allowed; margin-top: 20px;">
+                    Eu entendo as consequências, remover este aluno
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <script src="js/portal-shared.js"></script>
 
     <script src="js/portal-professor.js"></script>
