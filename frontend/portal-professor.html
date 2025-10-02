@@ -94,6 +94,15 @@
                         Boletim Alunos
                     </a>
                 </li>
+
+                <li>
+                    <a href="#" data-section="publicar-noticia" title="Escrever e publicar uma nova notícia">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path>
+                        </svg>
+                        Publicar Notícia
+                    </a>
+                </li>
             </ul>
         </aside>
 
@@ -228,6 +237,25 @@
                     </table>
                 </div>
             </section>
+
+            <section id="publicar-noticia" class="content-section">
+                <h2>Publicar Nova Notícia</h2>
+                <form id="formPublicarNoticia" class="custom-form">
+                    <label for="noticiaTitulo">Título:</label>
+                    <input type="text" id="noticiaTitulo" required title="Digite o título da notícia">
+                    
+                    <label for="noticiaConteudo">Conteúdo:</label>
+                    <textarea id="noticiaConteudo" rows="8" required title="Escreva o corpo da notícia"></textarea>
+                    
+                    <label for="noticiaCategoria">Categoria (Opcional):</label>
+                    <input type="text" id="noticiaCategoria" value="Geral" title="Defina uma categoria para a notícia">
+                    
+                    <button type="submit" title="Clique para publicar a notícia no portal">Publicar Notícia</button>
+                    
+                    <div id="noticiaMessage" class="form-message"></div>
+                </form>
+            </section>
+            
         </main>
     </div>
 
@@ -264,7 +292,6 @@
 
 
     <script src="js/portal-shared.js"></script>
-
-    <script src="js/portal-professor.js"></script>
+    <script type="module" src="js/portal-professor.js"></script>
 </body>
 </html>

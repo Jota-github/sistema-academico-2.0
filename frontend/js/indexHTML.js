@@ -1,149 +1,173 @@
-// Variáveis que podem ser usadas em qualquer parte do código JavaScript
-// 'let' permite que o valor seja alterado depois
-let currentImageIndex = 0;  // Controla qual imagem está sendo mostrada no modal
+// frontend/js/indexHTML.js (VERSÃO FINAL REFATORADA)
 
-// 'const' cria uma variável que não pode ser alterada
-// querySelectorAll() encontra TODOS os elementos com a classe especificada
+import { apiService } from './apiService.js';
+
+// --- VARIÁVEIS GLOBAIS DO MÓDULO ---
+let currentImageIndex = 0;
 const galleryItems = document.querySelectorAll('.gallery-item');
 
-// Este código é executado quando a página termina de carregar completamente
-// 'load' é diferente de 'DOMContentLoaded' - espera imagens, CSS, etc.
-window.addEventListener('load', () => {
-    // Encontra o elemento da tela de carregamento
-    const loading = document.getElementById('loading');
+// --- DEFINIÇÃO DAS FUNÇÕES ---        
 
-    // setTimeout() executa uma função após um tempo determinado (em milissegundos)
-    // 500ms = meio segundo - dá tempo para uma transição suave
-    setTimeout(() => {
-        // Adiciona a classe 'hidden' que no CSS faz o elemento desaparecer
-        loading.classList.add('hidden');
-    }, 500);
-});
+async function carregarUltimaNoticia() {
+    const noticiasGrid = document.getElementById('noticias-content');
+    if (!noticiasGrid) return; 
 
-// Muda a aparência do cabeçalho quando o usuário rola a página
-window.addEventListener('scroll', () => {
-    const header = document.getElementById('header');
+    try {
+        const noticias = await apiService.getNoticias();    
+        if (noticias.length === 0) return;
 
-    // window.scrollY retorna quantos pixels o usuário rolou para baixo
-    // Se rolou mais de 50 pixels, adiciona a classe 'scrolled'
-    // toggle() adiciona a classe se não existir, remove se existir
-    header.classList.toggle('scrolled', window.scrollY > 50);
-});
+        const ultimaNoticia = noticias[0];
+        const noticiaDinamicaExistente = document.getElementById('noticia-dinamica');
+        if (noticiaDinamicaExistente) {
+            noticiaDinamicaExistente.remove();
+        }
 
-// Função que é chamada quando o usuário clica nos botões "Notícias" ou "Eventos"
-function showTab(tabName) {
-    // PASSO 1: Esconde todos os conteúdos das abas
-    document.getElementById('noticias-content').style.display = 'none';
-    document.getElementById('eventos-content').style.display = 'none';
+        const article = document.createElement('article');
+        article.className = 'news-card';
+        article.id = 'noticia-dinamica';
 
-    // PASSO 2: Remove a classe 'active' de todos os botões
-    // forEach() executa uma função para cada elemento encontrado
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        const dataFormatada = new Date(ultimaNoticia.data_publicacao).toLocaleDateString('pt-BR', {
+            day: '2-digit', month: 'long', year: 'numeric'
+        });
 
-    // PASSO 3: Mostra apenas o conteúdo da aba selecionada
-    // 'grid' é o tipo de display usado no CSS para organizar os cards
-    document.getElementById(tabName + '-content').style.display = 'grid';
+        article.innerHTML = `
+            <img src="imagens/noticias-img-04.png" alt="Imagem da notícia publicada">
+            <div class="news-content">
+                <div class="news-category">${ultimaNoticia.categoria || 'Geral'}</div>
+                <div class="news-date">${dataFormatada}</div>
+                <h3>${ultimaNoticia.titulo}</h3>
+                <p>${ultimaNoticia.conteudo}</p>
+            </div>
+        `;
+        noticiasGrid.appendChild(article);
 
-    // PASSO 4: Destaca o botão da aba ativa
-    // Template literal (``) permite inserir variáveis dentro de strings
-    document.querySelector(`.tab-btn[onclick="showTab('${tabName}')"]`).classList.add('active');
-}
-// Função que abre/fecha os menus da sidebar quando clicados
-function toggleExpand(element) {
-    // 'element' é o cabeçalho que foi clicado
-    // nextElementSibling é o próximo elemento irmão (o conteúdo do menu)
-    const content = element.nextElementSibling;
-
-    // querySelector() encontra o primeiro elemento que corresponde ao seletor
-    // 'span:last-child' encontra o último <span> dentro do elemento (a seta)
-    const arrow = element.querySelector('span:last-child');
-
-    // Verifica se o menu já está aberto (tem a classe 'active')
-    if (content.classList.contains('active')) {
-        // Se está aberto, fecha
-        content.classList.remove('active');
-        arrow.textContent = '▼';  // Seta para baixo
-    } else {
-        // Se está fechado, abre
-        content.classList.add('active');
-        arrow.textContent = '▲';  // Seta para cima
+    } catch (error) {
+        console.error('Erro ao buscar notícia:', error);
     }
 }
 
-// Função para abrir o modal com uma imagem específica
+function showTab(tabName) {
+    document.getElementById('noticias-content').style.display = 'none';
+    document.getElementById('eventos-content').style.display = 'none';
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    const activeTab = document.getElementById(tabName + '-content');
+    if (activeTab) activeTab.style.display = 'grid';
+
+    const activeButton = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    if(activeButton) activeButton.classList.add('active');
+}
+
+function toggleExpand(headerElement) {
+    const content = headerElement.nextElementSibling;
+    const arrow = headerElement.querySelector('span:last-child');
+
+    if (content.classList.contains('active')) {
+        content.classList.remove('active');
+        if (arrow) arrow.textContent = '▼';
+    } else {
+        content.classList.add('active');
+        if (arrow) arrow.textContent = '▲';
+    }
+}
+
 function openModal(index) {
-    // Salva qual imagem está sendo mostrada
-    currentImageIndex = index;
-
-    // Encontra os elementos necessários
+    currentImageIndex = parseInt(index);
     const modal = document.getElementById('galleryModal');
-    const item = galleryItems[index];  // O item da galeria que foi clicado
-    const img = item.querySelector('img');  // A imagem dentro do item
-    const overlay = item.querySelector('.gallery-overlay');  // As informações sobre a imagem
+    const item = galleryItems[currentImageIndex];
+    if (!modal || !item) return;
 
-    // Atualiza o conteúdo do modal com os dados da imagem clicada
+    const img = item.querySelector('img');
+    const overlay = item.querySelector('.gallery-overlay');
+
     document.getElementById('modalImage').src = img.getAttribute('data-full') || img.src;
     document.getElementById('modalImage').alt = img.alt;
     document.getElementById('modalTitle').textContent = overlay.querySelector('h4').textContent;
     document.getElementById('modalDescription').textContent = overlay.querySelector('p').textContent;
 
-    // Torna o modal visível
     modal.classList.add('active');
-
-    // Impede que a página de fundo role enquanto o modal está aberto
     document.body.style.overflow = 'hidden';
 }
 
-// Função para fechar o modal
 function closeModal() {
-    document.getElementById('galleryModal').classList.remove('active');
-    document.body.style.overflow = 'auto';  // Permite rolar a página novamente
+    const modal = document.getElementById('galleryModal');
+    if (modal) modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
 }
 
-// Função para ir para a próxima imagem
 function nextImage() {
-    // Operador % (módulo) faz o índice voltar ao início quando chega ao fim
-    // Se há 6 imagens (0-5), quando chega em 5+1=6, 6%6=0 (volta ao início)
     currentImageIndex = (currentImageIndex + 1) % galleryItems.length;
     openModal(currentImageIndex);
 }
 
-// Função para ir para a imagem anterior
 function prevImage() {
-    // Lógica para voltar, garantindo que não fique negativo
-    // Se está em 0 e subtrai 1, fica -1. -1 + 6 = 5 (última imagem)
     currentImageIndex = (currentImageIndex - 1 + galleryItems.length) % galleryItems.length;
     openModal(currentImageIndex);
 }
 
-// Permite fechar o modal clicando na área escura ao redor da imagem
-document.getElementById('galleryModal').addEventListener('click', function(e) {
-    // e.target é o elemento que foi clicado
-    // this é o próprio modal
-    // Se clicou no fundo (não na imagem), fecha o modal
-    if (e.target === this) closeModal();
-});
+// --- INICIALIZAÇÃO E EVENT LISTENERS ---
 
-// Quando o usuário clica em links que começam com # (como #sobre, #galeria)
-// Em vez de "pular" para a seção, rola suavemente
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();  // Impede o comportamento padrão de "pular"
+// Executa quando o DOM está pronto
+document.addEventListener('DOMContentLoaded', () => {
+    // Carregamento inicial da página
+    const loading = document.getElementById('loading');
+    if (loading) {
+        setTimeout(() => {
+            loading.classList.add('hidden');
+        }, 500);
+    }
+    carregarUltimaNoticia();
 
-        // Encontra o elemento de destino
-        const targetElement = document.querySelector(this.getAttribute('href'));
-
-        if (targetElement) {
-            // Calcula a posição considerando a altura do cabeçalho fixo
-            // Isso evita que o conteúdo fique escondido atrás do cabeçalho
-            const headerHeight = 150;
-            const targetPosition = targetElement.offsetTop - headerHeight;
-
-            // Executa a rolagem suave
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'  // Faz a rolagem ser animada
-            });
+    // Efeito de scroll no header
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('header');
+        if (header) {
+            header.classList.toggle('scrolled', window.scrollY > 50);
         }
+    });
+
+    // Adiciona eventos de clique para as abas de Notícias/Eventos
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            showTab(button.dataset.tab);
+        });
+    });
+
+    // Adiciona eventos de clique para os menus expansíveis
+    document.querySelectorAll('.expandable-header').forEach(header => {
+        header.addEventListener('click', () => {
+            toggleExpand(header);
+        });
+    });
+
+    // Adiciona eventos de clique para os itens da galeria
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('click', () => {
+            openModal(item.dataset.index);
+        });
+    });
+
+    // Adiciona eventos de clique para os controles do modal
+    document.querySelector('.modal-close')?.addEventListener('click', closeModal);
+    document.querySelector('.modal-prev')?.addEventListener('click', prevImage);
+    document.querySelector('.modal-next')?.addEventListener('click', nextImage);
+    const galleryModal = document.getElementById('galleryModal');
+    if (galleryModal) {
+        galleryModal.addEventListener('click', (e) => {
+            if (e.target === galleryModal) closeModal();
+        });
+    }
+
+    // Scroll suave para âncoras
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) { 
+            e.preventDefault();
+            const targetElement = document.querySelector(this.getAttribute('href'));
+            if (targetElement) {
+                const headerHeight = 150;
+                const targetPosition = targetElement.offsetTop - headerHeight;
+                window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+            }
+        });
     });
 });
