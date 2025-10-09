@@ -514,3 +514,56 @@ body {
   height: 20px;
   object-fit: contain;
 }
+
+/* ===== ESTILOS PARA NOTIFICAÇÕES EM TEMPO REAL ===== */
+#notification-container {
+    position: fixed; /* Fica fixo na tela */
+    top: 120px; /* Abaixo do header */
+    right: 20px;
+    z-index: 2000; /* Garante que fique acima de outros elementos */
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification-toast {
+    background-color: #fff;
+    color: var(--cor-texto);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border-left: 5px solid var(--cor-sucesso);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s ease-in-out;
+    animation: slideIn 0.5s forwards;
+}
+
+.notification-toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-toast h4 {
+    margin: 0 0 5px 0;
+    color: var(--cor-primaria);
+    font-size: 1.1em;
+}
+
+.notification-toast p {
+    margin: 0;
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

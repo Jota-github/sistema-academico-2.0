@@ -104,4 +104,72 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Carrega o boletim na primeira vez que a página é aberta
     loadBoletim();
+
+    // =======================================================================
+    // FUNÇÃO PARA MOSTRAR NOTIFICAÇÃO (PARTE DO OBSERVER - CLIENT SIDE)
+    // =======================================================================
+    function showNotification(noticia) {
+        const container = document.getElementById('notification-container');
+        if (!container) return;
+
+        const notification = document.createElement('div');
+        notification.className = 'notification-toast';
+        notification.innerHTML = `
+            <h4>Nova Notícia Publicada!</h4>
+            <p><strong>${noticia.titulo}</strong></p>
+        `;
+        
+        container.appendChild(notification);
+        
+        // Adiciona a classe 'show' após um pequeno delay para a animação funcionar
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+
+        // Remove a notificação após 7 segundos
+        setTimeout(() => {
+            notification.classList.remove('show');
+            // Remove o elemento do DOM após a animação de saída
+            setTimeout(() => {
+                if(container.contains(notification)) {
+                    container.removeChild(notification);
+                }
+            }, 500);
+        }, 7000);
+    }
+
+
+    // =======================================================================
+    // LÓGICA DO WEBSOCKET (CLIENTE-SIDE OBSERVER)
+    // =======================================================================
+    function connectWebSocket() {
+        const socket = new WebSocket('ws://localhost:3000/notifications');
+
+        socket.onopen = () => {
+            console.log('Conectado ao servidor de notificações (WebSocket).');
+        };
+
+        socket.onmessage = (event) => {
+            try {
+                const novaNoticia = JSON.parse(event.data);
+                console.log('Nova notícia recebida:', novaNoticia);
+                showNotification(novaNoticia);
+            } catch (error) {
+                console.error('Erro ao processar a mensagem do WebSocket:', error);
+            }
+        };
+
+        socket.onclose = () => {
+            console.log('Desconectado do servidor de notificações. Tentando reconectar em 5 segundos...');
+            setTimeout(connectWebSocket, 5000);
+        };
+
+        socket.onerror = (error) => {
+            console.error('Erro no WebSocket:', error);
+            socket.close();
+        };
+    }
+
+    // Inicia a conexão WebSocket
+    connectWebSocket();
 });
