@@ -4,23 +4,27 @@
 
 require('dotenv').config();
 const express = require('express');
-const { Pool } = require('pg');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const http = require('http');
 const { WebSocketServer } = require('ws');
+
+// IMPORTAÇÕES NOVAS (Refatoração)
+// Importamos o pool (para transações manuais) e a função queryWithRetry (para consultas resilientes)
+const { queryWithRetry, pool } = require('./db/database');
+// Importamos o comando para publicar notícias
+const CreateNewsCommand = require('./commands/CreateNewsCommand');
 
 // ================================================================================
 // CONFIGURAÇÃO DO SERVIDOR EXPRESS
 // ================================================================================
 
 const app = express();
-// Usa a porta definida na variável de ambiente PORT, ou 3000 como padrão.
 const PORTA = process.env.PORT || 3000;
 const server = http.createServer(app);
 
 // ================================================================================
-// IMPLEMENTAÇÃO DO PADRÃO OBSERVER PARA NOTIFICAÇÕES
+// IMPLEMENTAÇÃO DO PADRÃO OBSERVER (NOTIFICATION SERVICE)
 // ================================================================================
 
 class NotificationService {
@@ -51,6 +55,7 @@ const notificationService = new NotificationService();
 // ================================================================================
 
 const wss = new WebSocketServer({ server, path: '/notifications' });
+
 wss.on('connection', (ws) => {
     notificationService.addObserver(ws);
     ws.on('close', () => {
@@ -69,20 +74,9 @@ wss.on('connection', (ws) => {
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
-});
-
-// ================================================================================
-// CONFIGURAÇÃO DO BANCO DE DADOS POSTGRESQL
-// ================================================================================
-
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
 });
 
 // ================================================================================
@@ -123,6 +117,9 @@ app.post('/usuarios', verificarTokenEAutorizacao, async (req, res) => {
     if (!nome_completo || !email || !senha || !tipo) {
         return res.status(400).json({ error: 'Campos obrigatórios (nome, email, senha, tipo) faltando.' });
     }
+    
+    // Nota: Para transações complexas (BEGIN/COMMIT), mantemos o uso direto do pool.connect()
+    // pois o queryWithRetry é otimizado para consultas simples e não gerencia estado de transação.
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
@@ -158,7 +155,8 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Email e senha são obrigatórios.' });
     }
     try {
-        const result = await pool.query('SELECT * FROM Usuarios WHERE email = $1', [email]);
+        // Usa queryWithRetry para resiliência
+        const result = await queryWithRetry('SELECT * FROM Usuarios WHERE email = $1', [email]);
         const usuario = result.rows[0];
         if (!usuario) {
             return res.status(404).json({ error: 'Usuário não encontrado.' });
@@ -191,7 +189,8 @@ app.post('/login/professor', async (req, res) => {
             JOIN Professores p ON u.id = p.usuario_id 
             WHERE p.cpf = $1 AND u.tipo = 'professor';
         `;
-        const result = await pool.query(query, [cpf.replace(/\D/g, '')]);
+        // Usa queryWithRetry para resiliência
+        const result = await queryWithRetry(query, [cpf.replace(/\D/g, '')]);
         const usuario = result.rows[0];
         if (!usuario) {
             return res.status(404).json({ error: 'Professor não encontrado com o CPF informado.' });
@@ -218,50 +217,54 @@ app.get('/usuarios/:id', verificarTokenEAutorizacao, async (req, res) => {
     if (req.usuario.id !== parseInt(id) && req.usuario.tipo !== 'professor') {
         return res.status(403).json({ error: 'Acesso negado.' });
     }
-    const client = await pool.connect();
     try {
+        // Usa queryWithRetry para resiliência
         const queryUsuario = `SELECT id, nome_completo, email, tipo FROM Usuarios WHERE id = $1;`;
-        const resultUsuario = await client.query(queryUsuario, [id]);
+        const resultUsuario = await queryWithRetry(queryUsuario, [id]);
         const usuario = resultUsuario.rows[0];
+
         if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado.' });
+
         let usuarioDetalhes = { ...usuario };
+        
         if (usuario.tipo === 'aluno') {
-            const resultAluno = await client.query(`SELECT matricula, curso, periodo FROM Alunos WHERE usuario_id = $1;`, [id]);
+            const resultAluno = await queryWithRetry(`SELECT matricula, curso, periodo FROM Alunos WHERE usuario_id = $1;`, [id]);
             if (resultAluno.rows.length > 0) usuarioDetalhes.aluno_info = resultAluno.rows[0];
         } else if (usuario.tipo === 'professor') {
-            const resultProfessor = await client.query(`SELECT cpf FROM Professores WHERE usuario_id = $1;`, [id]);
+            const resultProfessor = await queryWithRetry(`SELECT cpf FROM Professores WHERE usuario_id = $1;`, [id]);
             if (resultProfessor.rows.length > 0) usuarioDetalhes.professor_info = resultProfessor.rows[0];
         }
+        
         res.status(200).json(usuarioDetalhes);
     } catch (error) {
         console.error('Erro ao buscar detalhes do usuário:', error);
         res.status(500).json({ error: 'Ocorreu um erro interno.' });
-    } finally {
-        client.release();
     }
 });
 
 app.post('/alterar-senha', verificarTokenEAutorizacao, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const userId = req.usuario.id;
+
     if (!currentPassword || !newPassword) {
         return res.status(400).json({ error: 'Senha atual e nova senha são obrigatórias.' });
     }
-    const client = await pool.connect();
+    
     try {
-        const result = await client.query('SELECT senha FROM Usuarios WHERE id = $1', [userId]);
+        // Usa queryWithRetry para resiliência
+        const result = await queryWithRetry('SELECT senha FROM Usuarios WHERE id = $1', [userId]);
         const usuario = result.rows[0];
         if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado.' });
+
         if (currentPassword !== usuario.senha) {
             return res.status(401).json({ error: 'Senha atual incorreta.' });
         }
-        await client.query('UPDATE Usuarios SET senha = $1 WHERE id = $2;', [newPassword, userId]);
+
+        await queryWithRetry('UPDATE Usuarios SET senha = $1 WHERE id = $2;', [newPassword, userId]);
         res.status(200).json({ message: 'Senha alterada com sucesso!' });
     } catch (error) {
         console.error('Erro ao alterar senha:', error);
         res.status(500).json({ error: 'Ocorreu um erro interno.' });
-    } finally {
-        client.release();
     }
 });
 
@@ -269,19 +272,26 @@ app.post('/alterar-senha', verificarTokenEAutorizacao, async (req, res) => {
 // SISTEMA DE NOTÍCIAS (CRUD)
 // ================================================================================
 
+// --- ROTA QUE APLICA O PADRÃO COMMAND (NOVA IMPLEMENTAÇÃO) ---
 app.post('/noticias', verificarTokenEAutorizacao, async (req, res) => {
     if (req.usuario.tipo !== 'professor') {
         return res.status(403).json({ error: 'Apenas professores podem publicar notícias.' });
     }
-    const { titulo, conteudo, categoria } = req.body;
-    if (!titulo || !conteudo) {
-        return res.status(400).json({ error: 'Título e conteúdo são obrigatórios.' });
+    
+    try {
+        // Instancia o comando, injetando a dependência do NotificationService (Observer)
+        const command = new CreateNewsCommand(notificationService);
+        
+        // Executa o comando passando os dados e o ID do autor
+        const noticia = await command.execute(req.body, req.usuario.id);
+        
+        res.status(201).json(noticia);
+    } catch (error) {
+        console.error("Erro no comando de notícia:", error.message);
+        res.status(400).json({ error: error.message });
     }
-    const query = `INSERT INTO Noticias (titulo, conteudo, categoria, autor_id) VALUES ($1, $2, $3, $4) RETURNING *;`;
-    const result = await pool.query(query, [titulo, conteudo, categoria || 'Geral', req.usuario.id]);
-    notificationService.notify(result.rows[0]);
-    res.status(201).json(result.rows[0]);
 });
+// ----------------------------------------------------------------
 
 app.get('/noticias', async (req, res) => {
     const query = `
@@ -290,8 +300,14 @@ app.get('/noticias', async (req, res) => {
         JOIN Usuarios u ON n.autor_id = u.id
         ORDER BY n.data_publicacao DESC;
     `;
-    const result = await pool.query(query);
-    res.status(200).json(result.rows);
+    try {
+        // Usa queryWithRetry para resiliência
+        const result = await queryWithRetry(query);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Erro ao buscar notícias:', error);
+        res.status(500).json({ error: 'Ocorreu um erro interno.' });
+    }
 });
 
 // ================================================================================
@@ -302,12 +318,15 @@ app.get('/boletins/aluno/:alunoId', verificarTokenEAutorizacao, async (req, res)
     if (req.usuario.tipo !== 'professor') {
         return res.status(403).json({ error: 'Acesso negado.' });
     }
+    
     const { alunoId } = req.params;
-    const client = await pool.connect();
+    
     try {
+        // Usa queryWithRetry para resiliência
         const alunoQuery = 'SELECT u.nome_completo, a.matricula FROM Usuarios u JOIN Alunos a ON u.id = a.usuario_id WHERE a.id = $1';
-        const alunoResult = await client.query(alunoQuery, [alunoId]);
+        const alunoResult = await queryWithRetry(alunoQuery, [alunoId]);
         if (alunoResult.rows.length === 0) return res.status(404).json({ error: 'Aluno não encontrado.' });
+        
         const boletimQuery = `
             SELECT d.nome as disciplina_nome, m.*, t.ano, t.semestre
             FROM Matriculas m
@@ -315,13 +334,11 @@ app.get('/boletins/aluno/:alunoId', verificarTokenEAutorizacao, async (req, res)
             JOIN Disciplinas d ON t.disciplina_id = d.id
             WHERE m.aluno_id = $1 ORDER BY t.ano DESC, t.semestre DESC, d.nome ASC;
         `;
-        const boletimResult = await client.query(boletimQuery, [alunoId]);
+        const boletimResult = await queryWithRetry(boletimQuery, [alunoId]);
         res.status(200).json({ aluno: alunoResult.rows[0], boletim: boletimResult.rows });
     } catch (error) {
         console.error('Erro ao buscar boletim do aluno:', error);
         res.status(500).json({ error: 'Ocorreu um erro interno.' });
-    } finally {
-        client.release();
     }
 });
 
@@ -329,11 +346,14 @@ app.get('/alunos/boletim', verificarTokenEAutorizacao, async (req, res) => {
     if (req.usuario.tipo !== 'aluno') {
         return res.status(403).json({ error: 'Apenas alunos podem acessar seu próprio boletim.' });
     }
-    const client = await pool.connect();
+    
     try {
-        const alunoResult = await client.query('SELECT id FROM Alunos WHERE usuario_id = $1', [req.usuario.id]);
+        // Usa queryWithRetry para resiliência
+        const alunoResult = await queryWithRetry('SELECT id FROM Alunos WHERE usuario_id = $1', [req.usuario.id]);
         if (alunoResult.rows.length === 0) return res.status(404).json({ error: 'Dados de aluno não encontrados.' });
+        
         const alunoId = alunoResult.rows[0].id;
+        
         const boletimQuery = `
             SELECT d.nome as disciplina_nome, m.nota1, m.nota2, m.media_final, m.frequencia, m.status
             FROM Matriculas m
@@ -341,13 +361,11 @@ app.get('/alunos/boletim', verificarTokenEAutorizacao, async (req, res) => {
             JOIN Disciplinas d ON t.disciplina_id = d.id
             WHERE m.aluno_id = $1 ORDER BY d.nome ASC;
         `;
-        const boletimResult = await pool.query(boletimQuery, [alunoId]);
+        const boletimResult = await queryWithRetry(boletimQuery, [alunoId]);
         res.status(200).json(boletimResult.rows);
     } catch (error) {
         console.error('Erro ao buscar boletim do aluno:', error);
         res.status(500).json({ error: 'Ocorreu um erro interno.' });
-    } finally {
-        client.release();
     }
 });
 
@@ -359,6 +377,8 @@ app.get('/alunos', verificarTokenEAutorizacao, async (req, res) => {
     if (req.usuario.tipo !== 'professor') {
         return res.status(403).json({ error: 'Apenas professores podem acessar esta lista.' });
     }
+
+    // Otimizado: retorna alunos mockados paginados, inclui tempo de processamento
     const totalAlunos = 8000;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
@@ -391,25 +411,34 @@ app.delete('/alunos/:id', verificarTokenEAutorizacao, async (req, res) => {
     if (req.usuario.tipo !== 'professor') {
         return res.status(403).json({ error: 'Apenas professores podem remover alunos.' });
     }
-    const { id } = req.params;
+
+    const { id } = req.params; // Este é o aluno_id
+
     const client = await pool.connect();
     try {
-        await client.query('BEGIN');
+        await client.query('BEGIN'); // Inicia a transação
+
+        // 1. Encontrar o usuario_id a partir do aluno_id
         const alunoResult = await client.query('SELECT usuario_id FROM Alunos WHERE id = $1', [id]);
         if (alunoResult.rows.length === 0) {
             await client.query('ROLLBACK');
             return res.status(404).json({ error: 'Aluno não encontrado.' });
         }
         const usuarioId = alunoResult.rows[0].usuario_id;
+
+        // 2. Deletar o registro da tabela Usuarios. O CASCADE cuidará do resto.
         const deleteResult = await client.query('DELETE FROM Usuarios WHERE id = $1', [usuarioId]);
+
         if (deleteResult.rowCount === 0) {
             await client.query('ROLLBACK');
             return res.status(404).json({ error: 'Falha ao encontrar o usuário para remover.' });
         }
-        await client.query('COMMIT');
+
+        await client.query('COMMIT'); // Confirma a transação
         res.status(200).json({ message: 'Aluno removido com sucesso.' });
+
     } catch (error) {
-        await client.query('ROLLBACK');
+        await client.query('ROLLBACK'); // Desfaz em caso de erro
         console.error('Erro ao remover aluno:', error);
         res.status(500).json({ error: 'Ocorreu um erro interno ao remover o aluno.' });
     } finally {
@@ -419,6 +448,7 @@ app.delete('/alunos/:id', verificarTokenEAutorizacao, async (req, res) => {
 
 app.get('/professores/turmas', verificarTokenEAutorizacao, async (req, res) => {
     if (req.usuario.tipo !== 'professor') return res.status(403).json({ error: 'Acesso negado.' });
+    
     const professorUsuarioId = req.usuario.id;
     const query = `
         SELECT t.id, d.nome as disciplina_nome, d.codigo as disciplina_codigo, t.ano, t.semestre, t.horario
@@ -427,8 +457,14 @@ app.get('/professores/turmas', verificarTokenEAutorizacao, async (req, res) => {
         JOIN Professores p ON t.professor_id = p.id
         WHERE p.usuario_id = $1 ORDER BY d.nome;
     `;
-    const result = await pool.query(query, [professorUsuarioId]);
-    res.status(200).json(result.rows);
+    try {
+        // Usa queryWithRetry para resiliência
+        const result = await queryWithRetry(query, [professorUsuarioId]);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Erro ao buscar turmas do professor:', error);
+        res.status(500).json({ error: 'Erro interno.' });
+    }
 });
 
 app.get('/turmas/:turmaId/alunos', verificarTokenEAutorizacao, async (req, res) => {
@@ -436,6 +472,7 @@ app.get('/turmas/:turmaId/alunos', verificarTokenEAutorizacao, async (req, res) 
         return res.status(403).json({ error: 'Acesso negado.' });
     }
     const { turmaId } = req.params;
+
     try {
         const query = `
             SELECT u.nome_completo, a.matricula
@@ -445,7 +482,8 @@ app.get('/turmas/:turmaId/alunos', verificarTokenEAutorizacao, async (req, res) 
             WHERE m.turma_id = $1
             ORDER BY u.nome_completo;
         `;
-        const result = await pool.query(query, [turmaId]);
+        // Usa queryWithRetry para resiliência
+        const result = await queryWithRetry(query, [turmaId]);
         res.status(200).json(result.rows);
     } catch (error) {
         console.error('Erro ao buscar alunos da turma:', error);
@@ -460,13 +498,17 @@ app.get('/turmas/:turmaId/alunos', verificarTokenEAutorizacao, async (req, res) 
 app.post('/recuperar-senha', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: 'O campo email é obrigatório.' });
+    
     try {
-        const result = await pool.query('SELECT * FROM Usuarios WHERE email = $1', [email]);
+        // Usa queryWithRetry para resiliência
+        const result = await queryWithRetry('SELECT * FROM Usuarios WHERE email = $1', [email]);
         if (result.rows.length === 0) {
             return res.status(200).json({ message: 'Se o email estiver cadastrado, um link de recuperação foi enviado.' });
         }
+        
         console.log(`SIMULAÇÃO: Enviando email de recuperação para ${email}`);
         res.status(200).json({ message: 'Se o email estiver cadastrado, um link de recuperação foi enviado.' });
+
     } catch(error) {
         console.error('Erro na recuperação de senha:', error);
         res.status(500).json({ error: 'Erro interno no servidor.' });
@@ -483,4 +525,5 @@ server.listen(PORTA, () => {
     console.log(`Servidor WebSocket também está rodando.`);
     console.log(`Banco de dados: PostgreSQL`);
     console.log(`Autenticação: JWT`);
+    console.log(`Padrão Command implementado na rota POST /noticias`);
 });
