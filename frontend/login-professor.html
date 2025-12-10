@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     
     <!-- Título que aparece na aba do navegador -->
-    <title>Login Professor - Sistema Acadêmico</title>
+    <title>Login Admin - Sistema Acadêmico</title>
     
     <!-- Link para o arquivo CSS que contém toda a aparência visual da página -->
     <link rel="stylesheet" href="css/style-login-professor.css">
@@ -44,12 +44,12 @@
             
             <!-- TEXTO DE BOAS-VINDAS -->
             <div class="welcome-text">
-                <h1>Bem-vindo, Professor!</h1>
-                <p>Acesse sua área docente com suas credenciais institucionais.</p>
+                <h1>Bem-vindo, Admin!</h1>
+                <p>Acesse sua área administrativa com suas credenciais institucionais.</p>
                 
-                <!-- Informações específicas sobre o que o professor pode fazer no sistema -->
+                <!-- Informações específicas sobre o que o admin pode fazer no sistema -->
                 <div class="teacher-info">
-                    <h3>Portal do Docente</h3>
+                    <h3>Portal do Admin</h3>
                     <p>Gerencie suas turmas, notas, frequências e materiais didáticos em um só lugar.</p>
                 </div>
             </div>
@@ -63,8 +63,8 @@
                 
                 <!-- CABEÇALHO DO FORMULÁRIO: Título e opções de navegação -->
                 <div class="form-header">
-                    <h2>Login do Professor</h2>
-                    <p class="form-subtitle">Entre com suas credenciais docentes</p>
+                    <h2>Login do Admin</h2>
+                    <p class="form-subtitle">Entre com suas credenciais administrativas</p>
                     
                     <!-- LINK PARA ÁREA DO ALUNO: Permite alternar entre tipos de login -->
                     <div class="student-login">
@@ -83,10 +83,10 @@
                 </div>
 
                 <!-- ==================== FORMULÁRIO DE LOGIN ==================== -->
-                <!-- Este é o formulário principal onde o professor digita suas credenciais -->
+                <!-- Este é o formulário principal onde o admin digita suas credenciais -->
                 <form id="loginForm">
                     
-                    <!-- CAMPO CPF: Input para o professor digitar seu CPF -->
+                    <!-- CAMPO CPF: Input para o admin digitar seu CPF -->
                     <div class="input-group">
                         <!-- 'required' torna o campo obrigatório (não pode ficar vazio) -->
                         <!-- 'maxlength="14"' limita a 14 caracteres (CPF formatado: 123.456.789-01) -->
@@ -101,7 +101,7 @@
                                title="Digite seu CPF - será formatado automaticamente">
                     </div>
                     
-                    <!-- CAMPO SENHA: Input para a senha do professor -->
+                    <!-- CAMPO SENHA: Input para a senha do admin -->
                     <div class="input-group">
                         <!-- 'type="password"' esconde o texto digitado (mostra pontinhos) -->
                         <input type="password" 
@@ -115,11 +115,11 @@
                     <!-- BOTÃO DE ENVIO: Quando clicado, envia os dados do formulário -->
                     <!-- 'type="submit"' faz com que o botão envie o formulário quando clicado -->
                     <button type="submit" class="login-btn" title="Clique para fazer login no sistema">
-                        Entrar como Professor
+                        Entrar como Admin
                     </button>
                 </form>
 
-                <!-- LINK PARA RECUPERAÇÃO DE SENHA: Caso o professor esqueça a senha -->
+                <!-- LINK PARA RECUPERAÇÃO DE SENHA: Caso o admin esqueça a senha -->
                 <div class="forgot-password">
                     <a href="esqueceu-senha.html" title="Clique aqui se esqueceu sua senha - será enviado um email para recuperação">
                         Esqueceu sua senha?
